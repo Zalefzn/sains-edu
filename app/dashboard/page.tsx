@@ -2,30 +2,78 @@
 
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+type Locale = "id" | "en";
+
+function getInitialLocale(): Locale {
+  if (typeof window === "undefined") return "id";
+  try {
+    const saved = window.localStorage.getItem("sains-edu-locale");
+    return saved === "en" ? "en" : "id";
+  } catch {
+    return "id";
+  }
+}
+
+function getInitialStudentName(): string {
+  if (typeof window === "undefined") return "Pengguna";
+  try {
+    return window.localStorage.getItem("sains-edu-student-name") ?? "Pengguna";
+  } catch {
+    return "Pengguna";
+  }
+}
+
+function getFlag(key: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(key) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function revealDelayStyle(delayMs: number): React.CSSProperties {
+  return { "--reveal-delay": `${delayMs}ms` } as unknown as React.CSSProperties;
+}
 
 export default function DashboardPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [studentName, setStudentName] = useState("Pengguna");
-  const [locale, setLocale] = useState<"id" | "en">("id");
+  const [studentName] = useState(() => getInitialStudentName());
+  const [locale, setLocale] = useState<Locale>(() => getInitialLocale());
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [understoodUsage, setUnderstoodUsage] = useState(false);
-  const [agreedContract, setAgreedContract] = useState(false);
+  const [understoodUsage, setUnderstoodUsage] = useState(() =>
+    getFlag("sains-edu-understood-usage")
+  );
+  const [agreedContract, setAgreedContract] = useState(() =>
+    getFlag("sains-edu-agreed-contract")
+  );
 
-  useEffect(() => {
-    const saved = window.localStorage.getItem("sains-edu-student-name");
-    if (saved) setStudentName(saved);
-  }, []);
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem("sains-edu-locale");
-    if (saved === "id" || saved === "en") setLocale(saved);
-  }, []);
+  const [alert, setAlert] = useState<{
+    open: boolean;
+    title: string;
+    message: string;
+  }>({ open: false, title: "", message: "" });
 
   useEffect(() => {
     window.localStorage.setItem("sains-edu-locale", locale);
   }, [locale]);
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      "sains-edu-understood-usage",
+      understoodUsage ? "1" : "0"
+    );
+  }, [understoodUsage]);
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      "sains-edu-agreed-contract",
+      agreedContract ? "1" : "0"
+    );
+  }, [agreedContract]);
 
   const t = useMemo(
     () =>
@@ -82,6 +130,10 @@ export default function DashboardPage() {
           pathExploreDesc:
             "Langsung eksplor materi dan latihan sesuai minat tanpa pre-test.",
           openPath: "Buka",
+          alertTitle: "Perhatian",
+          alertOk: "OK",
+          needUnderstand: "Silakan centang 'Saya memahami cara penggunaan' terlebih dahulu.",
+          needAgree: "Silakan centang persetujuan kontrak belajar terlebih dahulu.",
           }
         : {
             lang: "Language",
@@ -135,21 +187,24 @@ export default function DashboardPage() {
           pathExploreDesc:
             "Explore materials and exercises freely without taking a pre-test.",
           openPath: "Open",
+          alertTitle: "Notice",
+          alertOk: "OK",
+          needUnderstand: "Please check 'I understand how to use this' first.",
+          needAgree: "Please agree to the study agreement first.",
           },
     [locale]
   );
 
   const steps = t.steps;
-  const [activeStep, setActiveStep] = useState(0);
-
-  useEffect(() => {
-    const stepParam = searchParams.get("step");
-    if (!stepParam) return;
-    const parsed = Number(stepParam);
-    if (!Number.isFinite(parsed)) return;
-    if (parsed < 0 || parsed >= steps.length) return;
-    setActiveStep(parsed);
-  }, [searchParams, steps.length]);
+  const [activeStep, setActiveStep] = useState(() => {
+    const requested = Number(searchParams.get("step") ?? "0");
+    const understood = getFlag("sains-edu-understood-usage");
+    const agreed = getFlag("sains-edu-agreed-contract");
+    const maxStep = agreed ? 2 : understood ? 1 : 0;
+    if (!Number.isFinite(requested)) return 0;
+    const clamped = Math.min(Math.max(requested, 0), steps.length - 1);
+    return Math.min(clamped, maxStep);
+  });
 
   useEffect(() => {
     const elements = Array.from(
@@ -194,6 +249,8 @@ export default function DashboardPage() {
   const onLogout = () => {
     window.localStorage.removeItem("sains-edu-student-name");
     window.localStorage.removeItem("sains-edu-university");
+    window.localStorage.removeItem("sains-edu-understood-usage");
+    window.localStorage.removeItem("sains-edu-agreed-contract");
     router.push("/");
   };
 
@@ -203,9 +260,56 @@ export default function DashboardPage() {
   const continueLabel =
     activeStep === 1 ? t.agreeContinue : activeStep === 0 ? t.continue : t.next;
 
+  const openAlert = useCallback(
+    (message: string) => {
+      setAlert({ open: true, title: t.alertTitle, message });
+    },
+    [t.alertTitle]
+  );
+
+  const requestStep = useCallback(
+    (targetStep: number) => {
+      if (targetStep <= activeStep) {
+        setActiveStep(Math.max(0, targetStep));
+        return;
+      }
+
+      if (targetStep === 1 && !understoodUsage) {
+        openAlert(t.needUnderstand);
+        return;
+      }
+
+      if (targetStep === 2) {
+        if (!understoodUsage) {
+          openAlert(t.needUnderstand);
+          return;
+        }
+        if (!agreedContract) {
+          openAlert(t.needAgree);
+          return;
+        }
+      }
+
+      setActiveStep(Math.min(targetStep, steps.length - 1));
+    },
+    [
+      activeStep,
+      agreedContract,
+      openAlert,
+      steps.length,
+      t.needAgree,
+      t.needUnderstand,
+      understoodUsage,
+    ]
+  );
+
   const onContinue = () => {
-    if (!canContinue) return;
-    setActiveStep((s) => Math.min(s + 1, steps.length - 1));
+    if (!canContinue) {
+      if (activeStep === 0) openAlert(t.needUnderstand);
+      else if (activeStep === 1) openAlert(t.needAgree);
+      return;
+    }
+    requestStep(activeStep + 1);
   };
 
   const onOpenPretest = () => {
@@ -420,7 +524,7 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-6 sm:flex-row">
           <nav className="w-full sm:max-w-[260px] sm:shrink-0">
             <div className="hidden sm:block">
-              <div className="reveal-up sticky top-[92px] relative pl-4">
+              <div className="reveal-up sticky top-[92px] pl-4">
                 <div className="absolute left-1.5 top-0 h-full w-0.5 bg-zinc-200" />
                 <div className="space-y-2">
                   {steps.map((label, idx) => {
@@ -429,7 +533,7 @@ export default function DashboardPage() {
                       <button
                         key={label}
                         type="button"
-                        onClick={() => setActiveStep(idx)}
+                        onClick={() => requestStep(idx)}
                         className={`relative flex w-full cursor-pointer items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors ${
                           active
                             ? "text-[var(--brand)]"
@@ -458,7 +562,7 @@ export default function DashboardPage() {
                     <button
                       key={label}
                       type="button"
-                      onClick={() => setActiveStep(idx)}
+                      onClick={() => requestStep(idx)}
                       className={`cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-inset transition-colors ${
                         active
                           ? "bg-[var(--brand)] text-white ring-transparent"
@@ -631,7 +735,7 @@ export default function DashboardPage() {
                       type="button"
                       onClick={onOpenExplore}
                       className="reveal-up group flex cursor-pointer flex-col items-start justify-between gap-6 rounded-2xl bg-white p-6 text-left ring-1 ring-zinc-200/70 transition-colors hover:bg-zinc-50"
-                      style={{ ["--reveal-delay" as any]: "80ms" }}
+                      style={revealDelayStyle(80)}
                     >
                       <div className="flex items-start gap-4">
                         <div
@@ -698,6 +802,53 @@ export default function DashboardPage() {
           >
             {continueLabel}
           </button>
+        </div>
+      ) : null}
+
+      {alert.open ? (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={alert.title}
+          onMouseDown={(e) => {
+            if (e.target !== e.currentTarget) return;
+            setAlert((prev) => ({ ...prev, open: false }));
+          }}
+        >
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl ring-1 ring-zinc-200">
+            <div className="flex items-start gap-3">
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-full text-white"
+                style={{ backgroundColor: "var(--brand)" }}
+              >
+                <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+                  <path
+                    d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 13a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v7a1 1 0 0 1-1 1Zm0 4a1.25 1.25 0 1 1 1.25-1.25A1.25 1.25 0 0 1 12 19Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
+              <div className="min-w-0">
+                <p className="text-base font-semibold text-zinc-900">
+                  {alert.title}
+                </p>
+                <p className="mt-1 text-sm leading-6 text-zinc-600">
+                  {alert.message}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setAlert((prev) => ({ ...prev, open: false }))}
+                className="rounded-xl bg-[var(--brand)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:opacity-90"
+              >
+                {t.alertOk}
+              </button>
+            </div>
+          </div>
         </div>
       ) : null}
     </div>

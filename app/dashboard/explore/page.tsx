@@ -2,23 +2,37 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+type Locale = "id" | "en";
+
+function getInitialLocale(): Locale {
+  if (typeof window === "undefined") return "id";
+  try {
+    const saved = window.localStorage.getItem("sains-edu-locale");
+    return saved === "en" ? "en" : "id";
+  } catch {
+    return "id";
+  }
+}
+
+function revealDelayStyle(delayMs: number): React.CSSProperties {
+  return { "--reveal-delay": `${delayMs}ms` } as unknown as React.CSSProperties;
+}
 
 export default function ExplorePage() {
   const router = useRouter();
-  const [locale, setLocale] = useState<"id" | "en">("id");
-  const backToChoosePath = () => router.push("/dashboard?step=2");
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem("sains-edu-locale");
-    if (saved === "id" || saved === "en") setLocale(saved);
-  }, []);
+  const [locale] = useState<Locale>(() => getInitialLocale());
+  const backToChoosePath = useCallback(
+    () => router.push("/dashboard?step=2"),
+    [router]
+  );
 
   useEffect(() => {
     const onPopState = () => backToChoosePath();
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, []);
+  }, [backToChoosePath]);
 
   useEffect(() => {
     const elements = Array.from(
@@ -122,7 +136,7 @@ export default function ExplorePage() {
               type="button"
               onClick={backToChoosePath}
               className="reveal-up rounded-xl border border-zinc-200 bg-white px-6 py-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-50"
-              style={{ ["--reveal-delay" as any]: "80ms" }}
+              style={revealDelayStyle(80)}
             >
               {t.back}
             </button>

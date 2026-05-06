@@ -2,15 +2,145 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+type Locale = "id" | "en";
+type IconKind = "book" | "brain" | "chart" | "cap" | "cup";
+
+const iconClassName = "h-9 w-9 text-white";
+
+function Icon({ kind }: { kind: IconKind }) {
+  if (kind === "book") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" className={iconClassName} aria-hidden="true">
+        <path
+          d="M6.5 4.5H18a2 2 0 0 1 2 2V19a1 1 0 0 1-1.5.86c-1.4-.8-3-.86-4.5-.86-2.5 0-4.5.6-6 1.2-1.5-.6-3.5-1.2-6-1.2-.78 0-1.54.04-2.3.14A1 1 0 0 1 2 18.2V6.5a2 2 0 0 1 2-2h2.5Z"
+          opacity="0.9"
+          fill="currentColor"
+        />
+        <path
+          d="M8 7.2h6.8M8 10.2h6.8M8 13.2h4.6"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+
+  if (kind === "brain") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" className={iconClassName} aria-hidden="true">
+        <path
+          d="M9.2 4.8c-.2-1.6 1-2.8 2.6-2.8 1.2 0 2.3.8 2.6 2 .2-.1.5-.1.8-.1 1.7 0 3 1.3 3 3 0 .4-.1.8-.2 1.1 1.3.4 2.2 1.6 2.2 3.1 0 1.2-.6 2.3-1.6 2.9.2.4.3.8.3 1.3 0 1.7-1.3 3-3 3-.4 0-.9-.1-1.2-.3-.7 1-1.8 1.6-3.1 1.6-1.4 0-2.6-.7-3.3-1.8-.3.2-.7.3-1.1.3-1.7 0-3-1.3-3-3 0-.5.1-.9.3-1.3C2.6 13.4 2 12.3 2 11.1c0-1.6 1-2.9 2.5-3.2-.1-.3-.1-.6-.1-.9 0-1.7 1.3-3 3-3 .6 0 1.2.2 1.8.6Z"
+          fill="currentColor"
+          opacity="0.9"
+        />
+        <path
+          d="M8 9.2c.7-.7 1.6-1.1 2.6-1.1m-2.6 4c.7-.7 1.6-1.1 2.6-1.1m3.2-2.7c.9 0 1.8.4 2.5 1.1m-2.5 2.9c.9 0 1.8.4 2.5 1.1"
+          stroke="white"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          opacity="0.9"
+        />
+      </svg>
+    );
+  }
+
+  if (kind === "chart") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" className={iconClassName} aria-hidden="true">
+        <path
+          d="M4 20V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v15H4Z"
+          fill="currentColor"
+          opacity="0.9"
+        />
+        <path
+          d="M7 16.5l2.3-2.7 2.2 1.6 3.3-4 2.2 1.9"
+          stroke="white"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  if (kind === "cap") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" className={iconClassName} aria-hidden="true">
+        <path
+          d="M12 4 2.5 8.5 12 13l9.5-4.5L12 4Z"
+          fill="currentColor"
+          opacity="0.9"
+        />
+        <path
+          d="M6.2 11v4.3c0 1.3 2.6 2.7 5.8 2.7s5.8-1.4 5.8-2.7V11"
+          stroke="white"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={iconClassName} aria-hidden="true">
+      <path
+        d="M7 21h10a2 2 0 0 0 2-2v-3H5v3a2 2 0 0 0 2 2Z"
+        fill="currentColor"
+        opacity="0.9"
+      />
+      <path
+        d="M6 4h12v5c0 3.3-2.7 6-6 6s-6-2.7-6-6V4Z"
+        fill="currentColor"
+        opacity="0.9"
+      />
+      <path
+        d="M8.2 8.4h7.6M9 11h6"
+        stroke="white"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        opacity="0.95"
+      />
+    </svg>
+  );
+}
+
+function getInitialLocale(): Locale {
+  if (typeof window === "undefined") return "id";
+  try {
+    const saved = window.localStorage.getItem("sains-edu-locale");
+    return saved === "en" ? "en" : "id";
+  } catch {
+    return "id";
+  }
+}
+
+function getInitialText(key: string): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return window.localStorage.getItem(key) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function revealDelayStyle(delayMs: number): React.CSSProperties {
+  return { "--reveal-delay": `${delayMs}ms` } as unknown as React.CSSProperties;
+}
 
 export default function Home() {
   const router = useRouter();
   const [showSplash, setShowSplash] = useState(true);
-  const [locale, setLocale] = useState<"id" | "en">("id");
+  const [locale, setLocale] = useState<Locale>(() => getInitialLocale());
   const [isStartOpen, setIsStartOpen] = useState(false);
-  const [studentName, setStudentName] = useState("");
-  const [university, setUniversity] = useState("");
+  const [studentName, setStudentName] = useState(() =>
+    getInitialText("sains-edu-student-name")
+  );
+  const [university, setUniversity] = useState(() =>
+    getInitialText("sains-edu-university")
+  );
   const [formError, setFormError] = useState<string | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -20,243 +150,121 @@ export default function Home() {
   >([]);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
-  const iconClassName = "h-9 w-9 text-white";
-
-  const Icon = ({ kind }: { kind: "book" | "brain" | "chart" | "cap" | "cup" }) => {
-    if (kind === "book") {
-      return (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          className={iconClassName}
-          aria-hidden="true"
-        >
-          <path
-            d="M6.5 4.5H18a2 2 0 0 1 2 2V19a1 1 0 0 1-1.5.86c-1.4-.8-3-.86-4.5-.86-2.5 0-4.5.6-6 1.2-1.5-.6-3.5-1.2-6-1.2-.78 0-1.54.04-2.3.14A1 1 0 0 1 2 18.2V6.5a2 2 0 0 1 2-2h2.5Z"
-            opacity="0.9"
-            fill="currentColor"
-          />
-          <path
-            d="M8 7.2h6.8M8 10.2h6.8M8 13.2h4.6"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    }
-
-    if (kind === "brain") {
-      return (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          className={iconClassName}
-          aria-hidden="true"
-        >
-          <path
-            d="M9.2 4.8c-.2-1.6 1-2.8 2.6-2.8 1.2 0 2.3.8 2.6 2 .2-.1.5-.1.8-.1 1.7 0 3 1.3 3 3 0 .4-.1.8-.2 1.1 1.3.4 2.2 1.6 2.2 3.1 0 1.2-.6 2.3-1.6 2.9.2.4.3.8.3 1.3 0 1.7-1.3 3-3 3-.4 0-.9-.1-1.2-.3-.7 1-1.8 1.6-3.1 1.6-1.4 0-2.6-.7-3.3-1.8-.3.2-.7.3-1.1.3-1.7 0-3-1.3-3-3 0-.5.1-.9.3-1.3C2.6 13.4 2 12.3 2 11.1c0-1.6 1-2.9 2.5-3.2-.1-.3-.1-.6-.1-.9 0-1.7 1.3-3 3-3 .6 0 1.2.2 1.8.6Z"
-            fill="currentColor"
-            opacity="0.9"
-          />
-          <path
-            d="M8 9.2c.7-.7 1.6-1.1 2.6-1.1m-2.6 4c.7-.7 1.6-1.1 2.6-1.1m3.2-2.7c.9 0 1.8.4 2.5 1.1m-2.5 2.9c.9 0 1.8.4 2.5 1.1"
-            stroke="white"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            opacity="0.9"
-          />
-        </svg>
-      );
-    }
-
-    if (kind === "chart") {
-      return (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          className={iconClassName}
-          aria-hidden="true"
-        >
-          <path
-            d="M4 20V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v15H4Z"
-            fill="currentColor"
-            opacity="0.9"
-          />
-          <path
-            d="M7 16.5l2.3-2.7 2.2 1.6 3.3-4 2.2 1.9"
-            stroke="white"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-    }
-
-    if (kind === "cap") {
-      return (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          className={iconClassName}
-          aria-hidden="true"
-        >
-          <path
-            d="M12 4 2.5 8.5 12 13l9.5-4.5L12 4Z"
-            fill="currentColor"
-            opacity="0.9"
-          />
-          <path
-            d="M6.2 11v4.3c0 1.3 2.6 2.7 5.8 2.7s5.8-1.4 5.8-2.7V11"
-            stroke="white"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    }
-
-    return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        className={iconClassName}
-        aria-hidden="true"
-      >
-        <path
-          d="M7 21h10a2 2 0 0 0 2-2v-3H5v3a2 2 0 0 0 2 2Z"
-          fill="currentColor"
-          opacity="0.9"
-        />
-        <path
-          d="M6 4h12v5c0 3.3-2.7 6-6 6s-6-2.7-6-6V4Z"
-          fill="currentColor"
-          opacity="0.9"
-        />
-        <path
-          d="M8.2 8.4h7.6M9 11h6"
-          stroke="white"
-          strokeWidth="1.4"
-          strokeLinecap="round"
-          opacity="0.95"
-        />
-      </svg>
-    );
-  };
-
-  const t =
-    locale === "id"
-      ? {
-          brand: "SAINS EDUKASI",
-          subject: "Kimia",
-          headline:
-            "Materi, latihan, dan kuis untuk membantu memahami konsep kimia dengan lebih mudah.",
-          start: "Mulai Belajar",
-          materials: "Lihat Materi",
-          lang: "Bahasa",
-          heroAlt: "Ilustrasi siswa belajar",
-          splashAlt: "Memuat Sains Edukasi Kimia",
-          formTitle: "Mulai Belajar",
-          nameLabel: "Nama",
-          univLabel: "Universitas",
-          startNow: "Start",
-          cancel: "Batal",
-          required: "Nama dan Universitas wajib diisi.",
-          leaderboardTitle: "Peringkat Tertinggi",
-          leaderboardSubtitle: "Pengguna dengan skor tertinggi minggu ini.",
-          scoreLabel: "Skor",
-          scrollTop: "Ke Atas",
-          chatTitle: "AI Chat Kimia",
-          chatPlaceholder: "Tanya tentang kimia...",
-          chatSend: "Kirim",
-          chatGreeting:
-            "Halo! Aku asisten belajar kimia. Tanya konsep, contoh soal, atau ringkasan materi.",
-          footerTagline: "Belajar kimia jadi lebih mudah dan terarah.",
-          footerCopyright: "Sains Edukasi Kimia",
-          growthTitle: "Bersama kami, kamu berkembang dari berbagai sisi",
-          growthItems: [
-            {
-              title: "Memahami konsep kimia",
-              desc: "Belajar dari dasar hingga lanjutan dengan penjelasan yang ringkas dan terstruktur.",
-              icon: "book" as const,
-            },
-            {
-              title: "Melatih logika & analisis",
-              desc: "Asah kemampuan memecahkan soal dan menganalisis reaksi serta perhitungan.",
-              icon: "brain" as const,
-            },
-            {
-              title: "Meningkatkan literasi sains",
-              desc: "Terbiasa membaca data, grafik, dan hasil percobaan dengan tepat.",
-              icon: "chart" as const,
-            },
-            {
-              title: "Mendukung prestasi sekolah",
-              desc: "Latihan terarah untuk persiapan ulangan, tugas, dan ujian.",
-              icon: "cap" as const,
-            },
-          ],
-          growthExtraTitle: "Dan juga membuka peluang masa depan",
-          growthExtraDesc:
-            "Bangun fondasi sains yang kuat untuk studi lanjut dan berbagai bidang karier.",
-          growthExtraIcon: "cup" as const,
-        }
-      : {
-          brand: "SCIENCE EDUCATION",
-          subject: "Chemistry",
-          headline:
-            "Materials, exercises, and quizzes to make chemistry concepts easier to understand.",
-          start: "Start Learning",
-          materials: "View Materials",
-          lang: "Language",
-          heroAlt: "Student learning illustration",
-          splashAlt: "Loading Chemistry Science Education",
-          formTitle: "Start Learning",
-          nameLabel: "Name",
-          univLabel: "University",
-          startNow: "Start",
-          cancel: "Cancel",
-          required: "Name and University are required.",
-          leaderboardTitle: "Top Ranking",
-          leaderboardSubtitle: "Highest scoring users this week.",
-          scoreLabel: "Score",
-          scrollTop: "To Top",
-          chatTitle: "Chemistry AI Chat",
-          chatPlaceholder: "Ask about chemistry...",
-          chatSend: "Send",
-          chatGreeting:
-            "Hi! I’m your chemistry study assistant. Ask concepts, practice questions, or quick summaries.",
-          footerTagline: "Learn chemistry in a simpler and more structured way.",
-          footerCopyright: "Chemistry Science Education",
-          growthTitle: "With us, you grow from multiple angles",
-          growthItems: [
-            {
-              title: "Understand chemistry concepts",
-              desc: "Learn from basics to advanced topics with concise, structured explanations.",
-              icon: "book" as const,
-            },
-            {
-              title: "Train logic & analysis",
-              desc: "Sharpen problem-solving through reactions, calculations, and reasoning.",
-              icon: "brain" as const,
-            },
-            {
-              title: "Improve science literacy",
-              desc: "Get used to reading data, graphs, and experiment results accurately.",
-              icon: "chart" as const,
-            },
-            {
-              title: "Boost school performance",
-              desc: "Targeted practice for assignments, quizzes, and exams.",
-              icon: "cap" as const,
-            },
-          ],
-          growthExtraTitle: "And unlock future opportunities",
-          growthExtraDesc:
-            "Build a strong science foundation for further study and many career paths.",
-          growthExtraIcon: "cup" as const,
-        };
+  const t = useMemo(
+    () =>
+      locale === "id"
+        ? {
+            brand: "SAINS EDUKASI",
+            subject: "Kimia",
+            headline:
+              "Materi, latihan, dan kuis untuk membantu memahami konsep kimia dengan lebih mudah.",
+            start: "Mulai Belajar",
+            materials: "Lihat Materi",
+            lang: "Bahasa",
+            heroAlt: "Ilustrasi siswa belajar",
+            splashAlt: "Memuat Sains Edukasi Kimia",
+            formTitle: "Mulai Belajar",
+            nameLabel: "Nama",
+            univLabel: "Universitas",
+            startNow: "Start",
+            cancel: "Batal",
+            required: "Nama dan Universitas wajib diisi.",
+            leaderboardTitle: "Peringkat Tertinggi",
+            leaderboardSubtitle: "Pengguna dengan skor tertinggi minggu ini.",
+            scoreLabel: "Skor",
+            scrollTop: "Ke Atas",
+            chatTitle: "AI Chat Kimia",
+            chatPlaceholder: "Tanya tentang kimia...",
+            chatSend: "Kirim",
+            chatGreeting:
+              "Halo! Aku asisten belajar kimia. Tanya konsep, contoh soal, atau ringkasan materi.",
+            footerTagline: "Belajar kimia jadi lebih mudah dan terarah.",
+            footerCopyright: "Sains Edukasi Kimia",
+            growthTitle: "Bersama kami, kamu berkembang dari berbagai sisi",
+            growthItems: [
+              {
+                title: "Memahami konsep kimia",
+                desc: "Belajar dari dasar hingga lanjutan dengan penjelasan yang ringkas dan terstruktur.",
+                icon: "book" as const,
+              },
+              {
+                title: "Melatih logika & analisis",
+                desc: "Asah kemampuan memecahkan soal dan menganalisis reaksi serta perhitungan.",
+                icon: "brain" as const,
+              },
+              {
+                title: "Meningkatkan literasi sains",
+                desc: "Terbiasa membaca data, grafik, dan hasil percobaan dengan tepat.",
+                icon: "chart" as const,
+              },
+              {
+                title: "Mendukung prestasi sekolah",
+                desc: "Latihan terarah untuk persiapan ulangan, tugas, dan ujian.",
+                icon: "cap" as const,
+              },
+            ],
+            growthExtraTitle: "Dan juga membuka peluang masa depan",
+            growthExtraDesc:
+              "Bangun fondasi sains yang kuat untuk studi lanjut dan berbagai bidang karier.",
+            growthExtraIcon: "cup" as const,
+          }
+        : {
+            brand: "SCIENCE EDUCATION",
+            subject: "Chemistry",
+            headline:
+              "Materials, exercises, and quizzes to make chemistry concepts easier to understand.",
+            start: "Start Learning",
+            materials: "View Materials",
+            lang: "Language",
+            heroAlt: "Student learning illustration",
+            splashAlt: "Loading Chemistry Science Education",
+            formTitle: "Start Learning",
+            nameLabel: "Name",
+            univLabel: "University",
+            startNow: "Start",
+            cancel: "Cancel",
+            required: "Name and University are required.",
+            leaderboardTitle: "Top Ranking",
+            leaderboardSubtitle: "Highest scoring users this week.",
+            scoreLabel: "Score",
+            scrollTop: "To Top",
+            chatTitle: "Chemistry AI Chat",
+            chatPlaceholder: "Ask about chemistry...",
+            chatSend: "Send",
+            chatGreeting:
+              "Hi! I’m your chemistry study assistant. Ask concepts, practice questions, or quick summaries.",
+            footerTagline: "Learn chemistry in a simpler and more structured way.",
+            footerCopyright: "Chemistry Science Education",
+            growthTitle: "With us, you grow from multiple angles",
+            growthItems: [
+              {
+                title: "Understand chemistry concepts",
+                desc: "Learn from basics to advanced topics with concise, structured explanations.",
+                icon: "book" as const,
+              },
+              {
+                title: "Train logic & analysis",
+                desc: "Sharpen problem-solving through reactions, calculations, and reasoning.",
+                icon: "brain" as const,
+              },
+              {
+                title: "Improve science literacy",
+                desc: "Get used to reading data, graphs, and experiment results accurately.",
+                icon: "chart" as const,
+              },
+              {
+                title: "Boost school performance",
+                desc: "Targeted practice for assignments, quizzes, and exams.",
+                icon: "cap" as const,
+              },
+            ],
+            growthExtraTitle: "And unlock future opportunities",
+            growthExtraDesc:
+              "Build a strong science foundation for further study and many career paths.",
+            growthExtraIcon: "cup" as const,
+          },
+    [locale]
+  );
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setShowSplash(false), 900);
@@ -264,24 +272,8 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("sains-edu-locale");
-    if (saved === "id" || saved === "en") setLocale(saved);
-  }, []);
-
-  useEffect(() => {
-    const savedName = window.localStorage.getItem("sains-edu-student-name");
-    const savedUniv = window.localStorage.getItem("sains-edu-university");
-    if (savedName) setStudentName(savedName);
-    if (savedUniv) setUniversity(savedUniv);
-  }, []);
-
-  useEffect(() => {
     window.localStorage.setItem("sains-edu-locale", locale);
   }, [locale]);
-
-  useEffect(() => {
-    if (!isStartOpen) setFormError(null);
-  }, [isStartOpen]);
 
   useEffect(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > 500);
@@ -320,14 +312,20 @@ export default function Home() {
 
   useEffect(() => {
     if (!isChatOpen) return;
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [isChatOpen, chatMessages.length]);
+
+  const onOpenStart = () => {
+    setFormError(null);
+    setIsStartOpen(true);
+  };
+
+  const onOpenChat = () => {
+    setIsChatOpen(true);
     if (chatMessages.length === 0) {
       setChatMessages([{ role: "ai", text: t.chatGreeting }]);
-      return;
     }
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [isChatOpen, chatMessages.length, t.chatGreeting]);
-
-  const onOpenStart = () => setIsStartOpen(true);
+  };
 
   const leaderboard = [
     { name: "Rahyu Ardiana", univ: "UIN Bandung", score: 980 },
@@ -384,7 +382,7 @@ export default function Home() {
     }, 0);
   };
 
-  const onSubmitStart = (e: React.FormEvent) => {
+  const onSubmitStart = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     const trimmedName = studentName.trim();
     const trimmedUniv = university.trim();
@@ -544,7 +542,7 @@ export default function Home() {
               <div
                 key={item.title}
                 className="reveal-up flex flex-col items-start justify-between gap-5 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-200/70 sm:flex-row sm:gap-6 sm:p-6"
-                style={{ ["--reveal-delay" as any]: `${index * 80}ms` }}
+                  style={revealDelayStyle(index * 80)}
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-3">
@@ -576,7 +574,7 @@ export default function Home() {
 
             <div
               className="reveal-up rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-200/70 md:col-span-2 sm:p-6"
-              style={{ ["--reveal-delay" as any]: "360ms" }}
+              style={revealDelayStyle(360)}
             >
               <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
                 <div className="min-w-0">
@@ -621,7 +619,7 @@ export default function Home() {
                 <div
                   key={`${u.name}-${u.univ}`}
                   className="reveal-up flex items-center justify-between gap-4 px-5 py-4 sm:px-6"
-                  style={{ ["--reveal-delay" as any]: `${idx * 70}ms` }}
+                  style={revealDelayStyle(idx * 70)}
                 >
                   <div className="flex min-w-0 items-center gap-4">
                     <div
@@ -691,7 +689,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() =>
-                window.scrollTo({ top: 0, behavior: "smooth" as ScrollBehavior })
+                window.scrollTo({ top: 0, behavior: "smooth" })
               }
               className="fixed bottom-4 left-4 z-40 inline-flex items-center justify-center rounded-full border border-zinc-200 bg-white px-4 py-3 text-sm font-semibold text-zinc-800 shadow-sm transition-colors hover:bg-zinc-50"
             >
@@ -768,7 +766,7 @@ export default function Home() {
             ) : (
               <button
                 type="button"
-                onClick={() => setIsChatOpen(true)}
+                onClick={onOpenChat}
                 className="inline-flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg transition-colors hover:opacity-90"
                 style={{ backgroundColor: "var(--brand)" }}
                 aria-label={t.chatTitle}
@@ -799,7 +797,10 @@ export default function Home() {
           aria-modal="true"
           aria-label={t.formTitle}
           onMouseDown={(e) => {
-            if (e.target === e.currentTarget) setIsStartOpen(false);
+            if (e.target === e.currentTarget) {
+              setFormError(null);
+              setIsStartOpen(false);
+            }
           }}
         >
           <form
@@ -812,7 +813,10 @@ export default function Home() {
               </h2>
               <button
                 type="button"
-                onClick={() => setIsStartOpen(false)}
+                onClick={() => {
+                  setFormError(null);
+                  setIsStartOpen(false);
+                }}
                 className="rounded-full p-2 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
                 aria-label="Close"
               >
@@ -861,7 +865,10 @@ export default function Home() {
             <div className="mt-6 flex items-center justify-end gap-2">
               <button
                 type="button"
-                onClick={() => setIsStartOpen(false)}
+                onClick={() => {
+                  setFormError(null);
+                  setIsStartOpen(false);
+                }}
                 className="rounded-full border border-zinc-200 bg-white px-5 py-2.5 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-50"
               >
                 {t.cancel}
