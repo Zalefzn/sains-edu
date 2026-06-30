@@ -33,6 +33,8 @@ export default function ModuleDetailPage() {
   const [locale] = useState<Locale>(() => getInitialLocale());
   const [stepIndex, setStepIndex] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [exerciseAnswers, setExerciseAnswers] = useState<Record<string, string>>({});
+  const [exerciseResult, setExerciseResult] = useState<"passed" | "failed" | null>(null);
 
   const moduleId = String(params?.moduleId ?? "").toUpperCase() as ModuleCode;
   const currentModule = modules.find((item) => item.code === moduleId);
@@ -123,7 +125,7 @@ export default function ModuleDetailPage() {
   );
 
   const totalSteps = steps.length;
-  const currentProgress = finished
+  const currentProgress = finished || exerciseResult === "passed"
     ? 100
     : totalSteps > 0
       ? Math.round(((stepIndex + 1) / totalSteps) * 100)
@@ -152,6 +154,8 @@ export default function ModuleDetailPage() {
 
   const onSelectStep = (index: number) => {
     setFinished(false);
+    setExerciseResult(null);
+    setExerciseAnswers({});
     setStepIndex(index);
     persistProgress(Math.round(((index + 1) / totalSteps) * 100));
   };
@@ -160,6 +164,36 @@ export default function ModuleDetailPage() {
     if (!currentModule) {
       backToMap();
       return;
+    }
+
+    if (exerciseResult === "passed") {
+      backToMap();
+      return;
+    }
+
+    if (exerciseResult === "failed") {
+      const target = Math.max(0, steps.findIndex((s) => s.key === "material"));
+      setExerciseResult(null);
+      setExerciseAnswers({});
+      setStepIndex(target);
+      persistProgress(Math.round(((target + 1) / totalSteps) * 100));
+      return;
+    }
+
+    if (stepIndex >= totalSteps - 1 && currentStep?.key === "exercise") {
+      const questions = currentStep.questions ?? [];
+      if (questions.length > 0) {
+        const unanswered = questions.filter((q) => !exerciseAnswers[q.id]);
+        if (unanswered.length > 0) {
+          window.alert(locale === "id" ? "Jawab semua soal sebelum mengirim." : "Answer all questions before submitting.");
+          return;
+        }
+        const score = questions.filter((q) => exerciseAnswers[q.id] === q.correct).length;
+        const passed = score >= Math.ceil(questions.length * 0.6);
+        setExerciseResult(passed ? "passed" : "failed");
+        persistProgress(passed ? 100 : Math.round(((stepIndex + 1) / totalSteps) * 100));
+        return;
+      }
     }
 
     const nextValue =
@@ -179,6 +213,12 @@ export default function ModuleDetailPage() {
   const onPrev = () => {
     if (!currentModule) {
       backToMap();
+      return;
+    }
+
+    if (exerciseResult !== null) {
+      setExerciseResult(null);
+      setExerciseAnswers({});
       return;
     }
 
@@ -384,10 +424,69 @@ export default function ModuleDetailPage() {
             </div>
           </section>
 
-          {!finished ? (
+          {exerciseResult === "passed" ? (
+            <section className="reveal-up rounded-3xl bg-white p-6 ring-1 ring-zinc-200/70 sm:p-8">
+              <div className="flex items-start gap-4">
+                <div
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
+                  style={{ backgroundColor: "var(--brand)" }}
+                >
+                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" aria-hidden="true">
+                    <path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                    {locale === "id" ? "Latihan selesai" : "Exercise complete"}
+                  </p>
+                  <h2 className="mt-1 text-lg font-semibold text-zinc-900">
+                    {locale === "id" ? "Lulus! Kamu memahami materi ini." : "Passed! You understand this material."}
+                  </h2>
+                </div>
+              </div>
+              <div className="mt-6 rounded-3xl bg-zinc-50 p-6">
+                <p className="text-sm font-semibold text-zinc-900">
+                  {locale === "id" ? "Refleksi" : "Reflection"}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-zinc-700">
+                  {pick(locale, currentModule.prompt)}
+                </p>
+              </div>
+            </section>
+          ) : exerciseResult === "failed" ? (
+            <section className="reveal-up rounded-3xl bg-white p-6 ring-1 ring-zinc-200/70 sm:p-8">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-100">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-zinc-500" aria-hidden="true">
+                    <path d="M12 9v4m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                    {locale === "id" ? "Belum lulus" : "Not yet passed"}
+                  </p>
+                  <h2 className="mt-1 text-lg font-semibold text-zinc-900">
+                    {locale === "id"
+                      ? "Pelajari kembali materi inti sebelum mencoba lagi."
+                      : "Review the core material before trying again."}
+                  </h2>
+                </div>
+              </div>
+              <div className="mt-6 rounded-3xl bg-zinc-50 p-6">
+                <p className="text-sm font-semibold text-zinc-900">
+                  {locale === "id" ? "Ringkasan Materi" : "Material Summary"}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-zinc-700">
+                  {pick(locale, steps.find((s) => s.key === "material")?.body ?? { id: "", en: "" })}
+                </p>
+              </div>
+            </section>
+          ) : !finished ? (
             <section className="space-y-5">
               {steps.map((step, index) => {
                 const active = index === stepIndex;
+                const isExerciseActive = step.key === "exercise" && active;
+                const exerciseQuestions = isExerciseActive ? (step.questions ?? []) : [];
                 return (
                   <article
                     key={`${step.key}-${index}`}
@@ -409,9 +508,7 @@ export default function ModuleDetailPage() {
                       </div>
                       <div
                         className={`inline-flex rounded-full px-3 py-1.5 text-xs font-semibold ${
-                          active
-                            ? "text-white"
-                            : "bg-zinc-100 text-zinc-700"
+                          active ? "text-white" : "bg-zinc-100 text-zinc-700"
                         }`}
                         style={active ? { backgroundColor: "var(--brand)" } : undefined}
                       >
@@ -419,33 +516,95 @@ export default function ModuleDetailPage() {
                       </div>
                     </div>
 
-                    <div className="mt-5 rounded-3xl bg-zinc-50 p-6">
-                      <p className="text-sm font-semibold text-zinc-900">
-                        {t.studyFocus}
-                      </p>
-                      <p className="mt-3 text-sm leading-8 text-zinc-700">
-                        {pick(locale, step.body)}
-                      </p>
-                    </div>
-
-                    {step.checkpoints?.length ? (
-                      <div className="mt-5 rounded-3xl border border-zinc-200 bg-white p-6">
-                        <p className="text-sm font-semibold text-zinc-900">
-                          {t.checkpoints}
-                        </p>
-                        <ul className="mt-4 space-y-3 text-sm leading-7 text-zinc-700">
-                          {step.checkpoints.map((point, pointIndex) => (
-                            <li key={pointIndex} className="flex gap-3">
-                              <span
-                                className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full"
-                                style={{ backgroundColor: "var(--brand)" }}
-                              />
-                              <span>{pick(locale, point)}</span>
-                            </li>
-                          ))}
-                        </ul>
+                    {step.key === "visual" && currentModule.pubchemCid ? (
+                      <>
+                        <div className="mt-5 rounded-3xl bg-zinc-50 p-6">
+                          <p className="text-sm font-semibold text-zinc-900">
+                            {t.studyFocus}
+                          </p>
+                          <p className="mt-3 text-sm leading-8 text-zinc-700">
+                            {pick(locale, step.body)}
+                          </p>
+                        </div>
+                        <div className="mt-5 overflow-hidden rounded-3xl border border-zinc-200/70">
+                          <iframe
+                            src={`https://pubchem.ncbi.nlm.nih.gov/compound/${currentModule.pubchemCid}#section=3D-Conformer&embed=true`}
+                            className="h-[480px] w-full border-0"
+                            title={`3D structure – ${pick(locale, currentModule.title)}`}
+                            loading="lazy"
+                          />
+                        </div>
+                      </>
+                    ) : isExerciseActive && exerciseQuestions.length > 0 ? (
+                      <div className="mt-5 space-y-4">
+                        {exerciseQuestions.map((q, qi) => (
+                          <div key={q.id} className="rounded-3xl bg-zinc-50 p-5">
+                            <p className="text-sm font-semibold text-zinc-900">
+                              {qi + 1}. {pick(locale, q.prompt)}
+                            </p>
+                            <div className="mt-3 grid gap-2">
+                              {q.options.map((opt, oi) => {
+                                const selected = exerciseAnswers[q.id] === opt.value;
+                                return (
+                                  <button
+                                    key={opt.value}
+                                    type="button"
+                                    onClick={() =>
+                                      setExerciseAnswers((prev) => ({ ...prev, [q.id]: opt.value }))
+                                    }
+                                    className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left text-sm font-medium transition-all hover:-translate-y-0.5 ${
+                                      selected
+                                        ? "border-transparent text-white shadow-md"
+                                        : "border-zinc-200 bg-white text-zinc-800 hover:border-[var(--brand)]/30"
+                                    }`}
+                                    style={selected ? { backgroundColor: "var(--brand)" } : undefined}
+                                  >
+                                    <span
+                                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-xs font-semibold ${
+                                        selected ? "bg-white/20 text-white" : "bg-zinc-100 text-zinc-600"
+                                      }`}
+                                    >
+                                      {String.fromCharCode(65 + oi)}
+                                    </span>
+                                    {pick(locale, opt.label)}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ) : null}
+                    ) : (
+                      <>
+                        <div className="mt-5 rounded-3xl bg-zinc-50 p-6">
+                          <p className="text-sm font-semibold text-zinc-900">
+                            {t.studyFocus}
+                          </p>
+                          <p className="mt-3 text-sm leading-8 text-zinc-700">
+                            {pick(locale, step.body)}
+                          </p>
+                        </div>
+
+                        {step.checkpoints?.length ? (
+                          <div className="mt-5 rounded-3xl border border-zinc-200 bg-white p-6">
+                            <p className="text-sm font-semibold text-zinc-900">
+                              {t.checkpoints}
+                            </p>
+                            <ul className="mt-4 space-y-3 text-sm leading-7 text-zinc-700">
+                              {step.checkpoints.map((point, pointIndex) => (
+                                <li key={pointIndex} className="flex gap-3">
+                                  <span
+                                    className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full"
+                                    style={{ backgroundColor: "var(--brand)" }}
+                                  />
+                                  <span>{pick(locale, point)}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : null}
+                      </>
+                    )}
                   </article>
                 );
               })}
@@ -480,19 +639,25 @@ export default function ModuleDetailPage() {
             onClick={onPrev}
             className="reveal-up flex-1 rounded-xl border border-zinc-200 bg-white px-6 py-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 sm:flex-none"
           >
-            {finished ? t.back : t.prev}
+            {exerciseResult !== null || finished ? t.back : t.prev}
           </button>
           <button
             type="button"
-            onClick={finished ? backToMap : onNext}
+            onClick={onNext}
             className="reveal-up flex-1 rounded-xl bg-[var(--brand)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:opacity-90 sm:flex-none"
             style={revealDelayStyle(80)}
           >
-            {finished
+            {exerciseResult === "passed"
               ? t.continueMap
+              : exerciseResult === "failed"
+              ? (locale === "id" ? "Pelajari Ulang" : "Review Material")
+              : finished
+              ? t.continueMap
+              : stepIndex === totalSteps - 1 && currentStep?.key === "exercise" && (currentStep.questions?.length ?? 0) > 0
+              ? (locale === "id" ? "Kirim Jawaban" : "Submit Answers")
               : stepIndex === totalSteps - 1
-                ? t.finish
-                : t.next}
+              ? t.finish
+              : t.next}
           </button>
         </div>
       </div>

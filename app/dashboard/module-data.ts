@@ -7,7 +7,15 @@ export type ModuleItem = {
   title: LocalizedText;
   summary: LocalizedText;
   prompt: LocalizedText;
+  pubchemCid?: number;
 };
+export type ExerciseQuestion = {
+  id: string;
+  prompt: LocalizedText;
+  options: Array<{ value: string; label: LocalizedText }>;
+  correct: string;
+};
+
 export type ModuleStep = {
   key:
     | "stimulus"
@@ -20,6 +28,7 @@ export type ModuleStep = {
   title: LocalizedText;
   body: LocalizedText;
   checkpoints?: LocalizedText[];
+  questions?: ExerciseQuestion[];
 };
 
 export type ModuleProgressMap = Record<ModuleCode, number>;
@@ -27,6 +36,7 @@ export type ModuleProgressMap = Record<ModuleCode, number>;
 export const modules: ModuleItem[] = [
   {
     code: "M1",
+    pubchemCid: 89594, // Nicotine
     title: {
       id: "Pengertian dan ruang lingkup zat adiktif dan psikotropika",
       en: "Definition and scope of addictive substances and psychotropics",
@@ -42,6 +52,7 @@ export const modules: ModuleItem[] = [
   },
   {
     code: "M2",
+    pubchemCid: 2519, // Caffeine
     title: {
       id: "Klasifikasi, contoh, dan ciri adiksi",
       en: "Classification, examples, and signs of addiction",
@@ -57,6 +68,7 @@ export const modules: ModuleItem[] = [
   },
   {
     code: "M3",
+    pubchemCid: 702, // Ethanol
     title: {
       id: "Mekanisme kimia di tubuh (farmakokinetik dan farmakodinamika)",
       en: "Chemical mechanisms in the body (pharmacokinetics and pharmacodynamics)",
@@ -72,6 +84,7 @@ export const modules: ModuleItem[] = [
   },
   {
     code: "M4",
+    pubchemCid: 681, // Dopamine
     title: {
       id: "Sistem reward otak (dopamin, craving, tolerance, withdrawal)",
       en: "Brain reward system (dopamine, craving, tolerance, withdrawal)",
@@ -87,6 +100,7 @@ export const modules: ModuleItem[] = [
   },
   {
     code: "M5",
+    pubchemCid: 5288826, // Morphine
     title: {
       id: "Dampak pada organ (otak, jantung, paru, hati) dan timeline efek",
       en: "Organ impact (brain, heart, lungs, liver) and effect timeline",
@@ -102,6 +116,7 @@ export const modules: ModuleItem[] = [
   },
   {
     code: "M6",
+    pubchemCid: 702, // Ethanol (halal literacy context)
     title: {
       id: "Literasi halal (label, red flags, aman konsumsi)",
       en: "Halal literacy (labels, red flags, safe consumption)",
@@ -117,6 +132,7 @@ export const modules: ModuleItem[] = [
   },
   {
     code: "M7",
+    pubchemCid: 10836, // Methamphetamine
     title: {
       id: "Studi kasus dan strategi menolak ajakan",
       en: "Case study and refusal strategy",
@@ -236,6 +252,50 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           en: "Explain why psychotropics need to be understood from the beginning.",
         },
       ],
+      questions: [
+        {
+          id: "m1q1",
+          prompt: {
+            id: "Zat adiktif adalah zat yang...",
+            en: "Addictive substances are substances that...",
+          },
+          options: [
+            { value: "a", label: { id: "Hanya memengaruhi rasa makanan", en: "Only affect food taste" } },
+            { value: "b", label: { id: "Memengaruhi sistem saraf dan dapat menimbulkan ketergantungan", en: "Affect the nervous system and may cause dependency" } },
+            { value: "c", label: { id: "Selalu berbahaya meski hanya dipakai sekali", en: "Are always harmful even with one use" } },
+            { value: "d", label: { id: "Hanya ditemukan di lingkungan laboratorium", en: "Are found only in laboratories" } },
+          ],
+          correct: "b",
+        },
+        {
+          id: "m1q2",
+          prompt: {
+            id: "Psikotropika berbeda dari zat adiktif umum karena...",
+            en: "Psychotropics differ from general addictive substances because they...",
+          },
+          options: [
+            { value: "a", label: { id: "Tidak menimbulkan ketergantungan sama sekali", en: "Do not cause dependency at all" } },
+            { value: "b", label: { id: "Hanya memengaruhi organ hati", en: "Only affect the liver" } },
+            { value: "c", label: { id: "Bekerja pada susunan saraf pusat dan mengubah aktivitas mental, perasaan, atau perilaku", en: "Act on the central nervous system and alter mental activity, feelings, or behavior" } },
+            { value: "d", label: { id: "Lebih aman daripada rokok biasa", en: "Are safer than regular cigarettes" } },
+          ],
+          correct: "c",
+        },
+        {
+          id: "m1q3",
+          prompt: {
+            id: "Literasi halal dalam konteks zat adiktif berarti...",
+            en: "Halal literacy in the context of addictive substances means...",
+          },
+          options: [
+            { value: "a", label: { id: "Hanya memeriksa logo halal pada kemasan produk", en: "Only checking the halal logo on product packaging" } },
+            { value: "b", label: { id: "Membeli produk yang paling murah di pasaran", en: "Buying the cheapest product on the market" } },
+            { value: "c", label: { id: "Mengikuti rekomendasi teman tanpa memeriksa kandungan", en: "Following friend recommendations without checking ingredients" } },
+            { value: "d", label: { id: "Menilai aspek tayyib, keamanan, manfaat, dan potensi mudarat suatu produk", en: "Assessing the tayyib aspect, safety, benefit, and potential harm of a product" } },
+          ],
+          correct: "d",
+        },
+      ],
     },
   ],
   M2: [
@@ -323,6 +383,50 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         {
           id: "Tuliskan dua ciri awal adiksi.",
           en: "Write two early signs of addiction.",
+        },
+      ],
+      questions: [
+        {
+          id: "m2q1",
+          prompt: {
+            id: "Nikotin termasuk golongan zat...",
+            en: "Nicotine belongs to the category of...",
+          },
+          options: [
+            { value: "a", label: { id: "Depresan saraf pusat", en: "Central nervous system depressant" } },
+            { value: "b", label: { id: "Halusinogen", en: "Hallucinogen" } },
+            { value: "c", label: { id: "Stimulan", en: "Stimulant" } },
+            { value: "d", label: { id: "Sedatif", en: "Sedative" } },
+          ],
+          correct: "c",
+        },
+        {
+          id: "m2q2",
+          prompt: {
+            id: "Tanda awal adiksi yang paling umum adalah...",
+            en: "The most common early sign of addiction is...",
+          },
+          options: [
+            { value: "a", label: { id: "Pola tidur yang lebih teratur dari sebelumnya", en: "A more regular sleep pattern than before" } },
+            { value: "b", label: { id: "Keinginan kuat untuk menggunakan lagi disertai meningkatnya toleransi", en: "A strong urge to use again accompanied by increasing tolerance" } },
+            { value: "c", label: { id: "Nafsu makan meningkat tanpa penggunaan zat apapun", en: "Increased appetite without any substance use" } },
+            { value: "d", label: { id: "Peningkatan kemampuan berkonsentrasi", en: "Improved ability to concentrate" } },
+          ],
+          correct: "b",
+        },
+        {
+          id: "m2q3",
+          prompt: {
+            id: "Dalam literasi halal, menilai risiko adiksi suatu produk berarti mempertimbangkan...",
+            en: "In halal literacy, assessing a product's addiction risk means considering...",
+          },
+          options: [
+            { value: "a", label: { id: "Harga dan popularitas produk di pasaran", en: "Product price and market popularity" } },
+            { value: "b", label: { id: "Warna dan desain kemasan produk", en: "Product color and packaging design" } },
+            { value: "c", label: { id: "Kandungan, efek, dan potensi penyalahgunaannya", en: "Its ingredients, effects, and potential for misuse" } },
+            { value: "d", label: { id: "Reputasi merek di media sosial", en: "Brand reputation on social media" } },
+          ],
+          correct: "c",
         },
       ],
     },
@@ -414,6 +518,50 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           en: "Why can the same substance have different effects on different people?",
         },
       ],
+      questions: [
+        {
+          id: "m3q1",
+          prompt: {
+            id: "Farmakokinetik membahas...",
+            en: "Pharmacokinetics explains...",
+          },
+          options: [
+            { value: "a", label: { id: "Apa yang zat lakukan terhadap tubuh", en: "What the substance does to the body" } },
+            { value: "b", label: { id: "Cara membuat senyawa kimia di laboratorium", en: "How to synthesize chemical compounds in the laboratory" } },
+            { value: "c", label: { id: "Apa yang tubuh lakukan terhadap zat: absorpsi, distribusi, metabolisme, dan ekskresi", en: "What the body does to the substance: absorption, distribution, metabolism, and excretion" } },
+            { value: "d", label: { id: "Dampak psikologis penggunaan obat secara jangka panjang", en: "The psychological effects of long-term drug use" } },
+          ],
+          correct: "c",
+        },
+        {
+          id: "m3q2",
+          prompt: {
+            id: "Hati memiliki peran penting dalam farmakokinetik karena...",
+            en: "The liver plays an important role in pharmacokinetics because it...",
+          },
+          options: [
+            { value: "a", label: { id: "Hati memproduksi dopamin dan serotonin", en: "Produces dopamine and serotonin" } },
+            { value: "b", label: { id: "Hati memproses dan mendetoksifikasi zat yang masuk ke tubuh", en: "Processes and detoxifies substances entering the body" } },
+            { value: "c", label: { id: "Hati menyimpan semua zat asing untuk digunakan kemudian", en: "Stores all foreign substances for later use" } },
+            { value: "d", label: { id: "Hati mengatur tekanan darah saat zat masuk ke tubuh", en: "Regulates blood pressure when substances enter the body" } },
+          ],
+          correct: "b",
+        },
+        {
+          id: "m3q3",
+          prompt: {
+            id: "Mengapa efek zat yang sama dapat berbeda pada setiap orang?",
+            en: "Why can the same substance have different effects on different people?",
+          },
+          options: [
+            { value: "a", label: { id: "Karena zat bekerja secara acak tanpa pola yang jelas", en: "Because the substance works randomly with no clear pattern" } },
+            { value: "b", label: { id: "Karena warna dan bentuk zat memengaruhi kekuatannya", en: "Because the color and form of the substance affect its potency" } },
+            { value: "c", label: { id: "Karena perbedaan metabolisme, usia, berat badan, dan kondisi kesehatan individu", en: "Because of differences in individual metabolism, age, weight, and health condition" } },
+            { value: "d", label: { id: "Karena hanya perempuan yang memiliki reseptor aktif di saraf pusat", en: "Because only women have active receptors in the central nervous system" } },
+          ],
+          correct: "c",
+        },
+      ],
     },
   ],
   M4: [
@@ -503,6 +651,50 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           en: "What is a common sign of withdrawal?",
         },
       ],
+      questions: [
+        {
+          id: "m4q1",
+          prompt: {
+            id: "Dopamin dalam sistem reward otak berfungsi sebagai...",
+            en: "Dopamine in the brain reward system functions as...",
+          },
+          options: [
+            { value: "a", label: { id: "Hormon yang mengatur tekanan darah dan detak jantung", en: "A hormone that regulates blood pressure and heart rate" } },
+            { value: "b", label: { id: "Neurotransmiter yang memberi sensasi senang saat dilepaskan", en: "A neurotransmitter that creates a feeling of pleasure when released" } },
+            { value: "c", label: { id: "Protein yang menghambat semua aktivitas otak", en: "A protein that inhibits all brain activity" } },
+            { value: "d", label: { id: "Enzim yang membantu proses pencernaan makanan", en: "An enzyme that aids in digesting food" } },
+          ],
+          correct: "b",
+        },
+        {
+          id: "m4q2",
+          prompt: {
+            id: "Tolerance pada penggunaan zat terjadi ketika...",
+            en: "Tolerance in substance use occurs when...",
+          },
+          options: [
+            { value: "a", label: { id: "Tubuh bereaksi negatif saat penggunaan zat dihentikan", en: "The body reacts negatively when substance use is stopped" } },
+            { value: "b", label: { id: "Seseorang pertama kali merasakan efek suatu zat baru", en: "A person first feels the effect of a new substance" } },
+            { value: "c", label: { id: "Otak menyesuaikan responsnya sehingga dibutuhkan dosis lebih besar untuk efek yang sama", en: "The brain adjusts its response so a larger dose is needed for the same effect" } },
+            { value: "d", label: { id: "Keinginan kuat yang mendorong seseorang menggunakan lagi", en: "A strong urge that pushes a person to use again" } },
+          ],
+          correct: "c",
+        },
+        {
+          id: "m4q3",
+          prompt: {
+            id: "Withdrawal terjadi ketika...",
+            en: "Withdrawal occurs when...",
+          },
+          options: [
+            { value: "a", label: { id: "Seseorang menggunakan zat untuk pertama kalinya", en: "A person uses a substance for the first time" } },
+            { value: "b", label: { id: "Kadar dopamin meningkat tajam setelah penggunaan zat", en: "Dopamine levels spike sharply after substance use" } },
+            { value: "c", label: { id: "Seseorang mulai menambah dosis secara bertahap", en: "A person gradually increases the dose" } },
+            { value: "d", label: { id: "Penggunaan zat dihentikan dan tubuh bereaksi negatif", en: "Substance use is stopped and the body reacts negatively" } },
+          ],
+          correct: "d",
+        },
+      ],
     },
   ],
   M5: [
@@ -590,6 +782,50 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         {
           id: "Mengapa hati berperan penting saat zat masuk ke tubuh?",
           en: "Why does the liver play an important role when substances enter the body?",
+        },
+      ],
+      questions: [
+        {
+          id: "m5q1",
+          prompt: {
+            id: "Dampak zat adiktif pada paru-paru terutama berupa...",
+            en: "The primary impact of addictive substances on the lungs is...",
+          },
+          options: [
+            { value: "a", label: { id: "Peningkatan kapasitas menyerap oksigen secara permanen", en: "A permanent increase in oxygen absorption capacity" } },
+            { value: "b", label: { id: "Gangguan pertukaran gas yang dapat merusak jaringan paru-paru", en: "Disrupted gas exchange that can damage lung tissue" } },
+            { value: "c", label: { id: "Penurunan tekanan darah hingga batas normal", en: "A drop in blood pressure to normal levels" } },
+            { value: "d", label: { id: "Tidak ada dampak karena paru-paru dilindungi oleh lendir", en: "No impact because the lungs are protected by mucus" } },
+          ],
+          correct: "b",
+        },
+        {
+          id: "m5q2",
+          prompt: {
+            id: "Hati bekerja lebih keras saat zat adiktif masuk ke tubuh karena...",
+            en: "The liver works harder when addictive substances enter the body because it...",
+          },
+          options: [
+            { value: "a", label: { id: "Hati harus memproduksi lebih banyak sel darah merah", en: "Must produce more red blood cells" } },
+            { value: "b", label: { id: "Hati bertanggung jawab atas metabolisme dan detoksifikasi zat", en: "Is responsible for metabolizing and detoxifying substances" } },
+            { value: "c", label: { id: "Hati menyimpan zat adiktif sebagai cadangan energi", en: "Stores addictive substances as energy reserves" } },
+            { value: "d", label: { id: "Hati mengirimkan sinyal ke otak tentang rasa lapar", en: "Sends signals to the brain about hunger" } },
+          ],
+          correct: "b",
+        },
+        {
+          id: "m5q3",
+          prompt: {
+            id: "Perbedaan efek jangka pendek dan jangka panjang zat adiktif adalah...",
+            en: "The difference between short-term and long-term effects of addictive substances is...",
+          },
+          options: [
+            { value: "a", label: { id: "Efek jangka pendek jauh lebih berbahaya dari jangka panjang", en: "Short-term effects are far more dangerous than long-term ones" } },
+            { value: "b", label: { id: "Keduanya tidak memiliki perbedaan yang signifikan", en: "Both have no significant difference" } },
+            { value: "c", label: { id: "Efek jangka pendek bersifat segera seperti perubahan detak jantung, sedangkan jangka panjang mencakup kerusakan organ yang bertahap", en: "Short-term effects are immediate such as heart rate changes, while long-term effects include gradual organ damage" } },
+            { value: "d", label: { id: "Efek jangka panjang hanya terjadi pada orang lanjut usia", en: "Long-term effects only occur in the elderly" } },
+          ],
+          correct: "c",
         },
       ],
     },
@@ -695,6 +931,50 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           en: "Why are red flags important in consumption decisions?",
         },
       ],
+      questions: [
+        {
+          id: "m6q1",
+          prompt: {
+            id: "Red flag pada label produk yang harus diwaspadai adalah...",
+            en: "Red flags on a product label to watch out for include...",
+          },
+          options: [
+            { value: "a", label: { id: "Logo merek yang menarik dan desain kemasan premium", en: "An attractive brand logo and premium packaging design" } },
+            { value: "b", label: { id: "Harga yang tercantum lebih mahal dari produk sejenis", en: "A listed price higher than similar products" } },
+            { value: "c", label: { id: "Peringatan kesehatan, kandungan berisiko, atau informasi yang tidak jelas", en: "Health warnings, risky ingredients, or unclear information" } },
+            { value: "d", label: { id: "Ukuran tulisan yang kecil pada bagian belakang kemasan", en: "Small text size on the back of the packaging" } },
+          ],
+          correct: "c",
+        },
+        {
+          id: "m6q2",
+          prompt: {
+            id: "Prinsip halal-tayyib dalam memilih produk berarti...",
+            en: "The halal-tayyib principle in choosing products means...",
+          },
+          options: [
+            { value: "a", label: { id: "Hanya membeli produk yang dijual di toko islami", en: "Only buying products sold in Islamic stores" } },
+            { value: "b", label: { id: "Memilih produk paling murah yang tersedia", en: "Choosing the cheapest product available" } },
+            { value: "c", label: { id: "Menilai produk dari sisi kehalalan, keamanan, manfaat, dan potensi mudaratnya", en: "Evaluating a product based on its halal status, safety, benefit, and potential harm" } },
+            { value: "d", label: { id: "Mengikuti pilihan influencer yang dikenal di media sosial", en: "Following the choices of well-known influencers on social media" } },
+          ],
+          correct: "c",
+        },
+        {
+          id: "m6q3",
+          prompt: {
+            id: "Informasi pertama yang penting diperiksa pada label produk adalah...",
+            en: "The first important information to check on a product label is...",
+          },
+          options: [
+            { value: "a", label: { id: "Nama merek dan logo perusahaan", en: "The brand name and company logo" } },
+            { value: "b", label: { id: "Diskon dan promosi yang sedang berlaku", en: "Current discounts and promotions" } },
+            { value: "c", label: { id: "Komposisi, izin edar, dan peringatan kesehatan", en: "Ingredients, distribution license, and health warnings" } },
+            { value: "d", label: { id: "Tanggal kadaluarsa saja tanpa memperhatikan komposisi", en: "Expiration date only, without checking ingredients" } },
+          ],
+          correct: "c",
+        },
+      ],
     },
   ],
   M7: [
@@ -782,6 +1062,50 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         {
           id: "Sebutkan langkah dukungan yang bisa dilakukan setelah menolak.",
           en: "Mention one support step that can be taken after refusing.",
+        },
+      ],
+      questions: [
+        {
+          id: "m7q1",
+          prompt: {
+            id: "Ketika diajak mencoba zat terlarang, respons paling tepat adalah...",
+            en: "When invited to try a prohibited substance, the most appropriate response is to...",
+          },
+          options: [
+            { value: "a", label: { id: "Mengikuti agar tidak dianggap berbeda dari teman", en: "Go along so as not to seem different from friends" } },
+            { value: "b", label: { id: "Diam dan berpura-pura tidak mendengar ajakan", en: "Stay silent and pretend not to hear the invitation" } },
+            { value: "c", label: { id: "Menolak dengan tegas dan santun disertai alasan yang jelas", en: "Refuse firmly and politely with a clear reason" } },
+            { value: "d", label: { id: "Mencoba sedikit terlebih dahulu untuk memastikan keamanannya", en: "Try a small amount first to check its safety" } },
+          ],
+          correct: "c",
+        },
+        {
+          id: "m7q2",
+          prompt: {
+            id: "Asertif dalam konteks menolak ajakan berarti...",
+            en: "Being assertive when refusing an invitation means...",
+          },
+          options: [
+            { value: "a", label: { id: "Bersikap agresif dan marah kepada orang yang mengajak", en: "Being aggressive and angry toward the person who invited" } },
+            { value: "b", label: { id: "Diam dan menghindar tanpa berkata apapun", en: "Staying silent and avoiding without saying anything" } },
+            { value: "c", label: { id: "Mampu berkata tidak dengan jelas dan bertanggung jawab tanpa menyakiti orang lain", en: "Being able to say no clearly and responsibly without hurting others" } },
+            { value: "d", label: { id: "Selalu mengikuti keinginan teman demi menjaga keharmonisan", en: "Always following friends' wishes to maintain harmony" } },
+          ],
+          correct: "c",
+        },
+        {
+          id: "m7q3",
+          prompt: {
+            id: "Dasar ilmiah untuk menolak ajakan mencoba zat adiktif mencakup pengetahuan tentang...",
+            en: "The scientific basis for refusing an invitation to try addictive substances includes knowledge of...",
+          },
+          options: [
+            { value: "a", label: { id: "Pendapat senior yang lebih berpengalaman di lingkungan sekitar", en: "The opinions of more experienced seniors in the environment" } },
+            { value: "b", label: { id: "Perasaan tidak suka terhadap bau atau tampilan zat tersebut", en: "A personal dislike of the substance's smell or appearance" } },
+            { value: "c", label: { id: "Jenis zat, cara kerja di tubuh, dampak organ, dan risiko adiksi", en: "Substance types, how they work in the body, organ impact, and addiction risk" } },
+            { value: "d", label: { id: "Larangan dari orang tua tanpa penjelasan ilmiah", en: "Parental prohibition without scientific explanation" } },
+          ],
+          correct: "c",
         },
       ],
     },

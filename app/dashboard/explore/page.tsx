@@ -13,6 +13,7 @@ import {
   type Locale,
   type ModuleCode,
 } from "../module-data";
+import { glossaryTerms, references } from "../reference-data";
 
 function getInitialLocale(): Locale {
   if (typeof window === "undefined") return "id";
@@ -22,6 +23,39 @@ function getInitialLocale(): Locale {
   } catch {
     return "id";
   }
+}
+
+function EvaluateCTA({ locale }: { locale: Locale }) {
+  const router = useRouter();
+  const [lastScore, setLastScore] = useState<string | null>(null);
+  const [lastBadge, setLastBadge] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLastScore(localStorage.getItem("sains-edu-evaluate-score"));
+    setLastBadge(localStorage.getItem("sains-edu-evaluate-badge"));
+  }, []);
+
+  const label = locale === "id" ? "Mulai Evaluasi Sumatif" : "Start Summative Evaluation";
+  const retake = locale === "id" ? "Ulangi Evaluasi" : "Retake";
+  const prev = locale === "id" ? "Skor Terakhir" : "Last Score";
+
+  return (
+    <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center">
+      {lastScore !== null && (
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-600">
+          {prev}: <span className="font-bold text-zinc-900">{lastScore}/14</span>
+          {lastBadge && <span className="ml-2 text-zinc-500">— {lastBadge}</span>}
+        </div>
+      )}
+      <button
+        onClick={() => router.push("/dashboard/evaluate")}
+        className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-md"
+        style={{ backgroundColor: "var(--brand)" }}
+      >
+        {lastScore !== null ? retake : label}
+      </button>
+    </div>
+  );
 }
 
 function revealDelayStyle(delayMs: number): React.CSSProperties {
@@ -41,6 +75,7 @@ export default function ExplorePage() {
   const [moduleProgress, setModuleProgress] = useState(() =>
     getDefaultModuleProgress()
   );
+  const [glossarySearch, setGlossarySearch] = useState("");
   const backToChoosePath = useCallback(
     () => router.push("/dashboard?step=2"),
     [router]
@@ -527,7 +562,7 @@ export default function ExplorePage() {
 
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               <a
-                href="#quiz"
+                href="/dashboard/evaluate"
                 className="reveal-up rounded-[1.5rem] border border-zinc-200/80 bg-[linear-gradient(135deg,rgba(46,193,185,0.10),rgba(255,255,255,1))] p-5 text-zinc-800 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
                 style={revealDelayStyle(40)}
               >
@@ -556,16 +591,118 @@ export default function ExplorePage() {
           <section id="quiz" className="reveal-up rounded-[1.75rem] border border-zinc-200/70 bg-white/90 p-6 shadow-sm ring-1 ring-zinc-200/60 sm:p-8">
             <h2 className="text-lg font-semibold text-zinc-900">{t.quizTitle}</h2>
             <p className="mt-3 text-sm leading-7 text-zinc-600">{t.quizDesc}</p>
+            <EvaluateCTA locale={locale} />
           </section>
 
           <section id="reference" className="reveal-up rounded-[1.75rem] border border-zinc-200/70 bg-white/90 p-6 shadow-sm ring-1 ring-zinc-200/60 sm:p-8">
             <h2 className="text-lg font-semibold text-zinc-900">{t.referenceTitle}</h2>
-            <p className="mt-3 text-sm leading-7 text-zinc-600">{t.referenceDesc}</p>
+            <p className="mt-2 text-sm leading-6 text-zinc-600">{t.referenceDesc}</p>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {references.map((ref) => {
+                const categoryLabel: Record<typeof ref.category, string> =
+                  locale === "id"
+                    ? { buku: "Buku", jurnal: "Jurnal", website: "Website", regulasi: "Regulasi" }
+                    : { buku: "Book", jurnal: "Journal", website: "Website", regulasi: "Regulation" };
+                return (
+                  <div
+                    key={ref.id}
+                    className="flex flex-col gap-3 rounded-2xl border border-zinc-200/70 bg-white p-4 shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="inline-flex rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+                        {categoryLabel[ref.category]}
+                      </span>
+                      <span className="text-xs font-medium text-zinc-400">{ref.year}</span>
+                    </div>
+                    <p className="text-sm font-semibold leading-5 text-zinc-900">{ref.title}</p>
+                    <p className="text-xs leading-5 text-zinc-500">{ref.author}</p>
+                    <div className="mt-auto flex items-center justify-between gap-2">
+                      <p className="text-xs text-zinc-400">{ref.source}</p>
+                      {ref.url ? (
+                        <a
+                          href={ref.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-100"
+                        >
+                          {locale === "id" ? "Buka" : "Open"}
+                          <svg viewBox="0 0 24 24" className="h-3 w-3" aria-hidden="true">
+                            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </a>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </section>
 
           <section id="glossary" className="reveal-up rounded-[1.75rem] border border-zinc-200/70 bg-white/90 p-6 shadow-sm ring-1 ring-zinc-200/60 sm:p-8">
-            <h2 className="text-lg font-semibold text-zinc-900">{t.glossaryTitle}</h2>
-            <p className="mt-3 text-sm leading-7 text-zinc-600">{t.glossaryDesc}</p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-zinc-900">{t.glossaryTitle}</h2>
+                <p className="mt-2 text-sm leading-6 text-zinc-600">{t.glossaryDesc}</p>
+              </div>
+              <span className="inline-flex rounded-full border border-zinc-200/70 bg-zinc-50 px-3 py-1 text-xs font-semibold text-zinc-500">
+                {glossaryTerms.length} {locale === "id" ? "istilah" : "terms"}
+              </span>
+            </div>
+
+            <div className="mt-5">
+              <input
+                type="search"
+                value={glossarySearch}
+                onChange={(e) => setGlossarySearch(e.target.value)}
+                placeholder={locale === "id" ? "Cari istilah…" : "Search terms…"}
+                className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[var(--brand)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/20 sm:max-w-xs"
+              />
+            </div>
+
+            <div className="mt-4 divide-y divide-zinc-100">
+              {glossaryTerms
+                .filter((term) => {
+                  if (!glossarySearch) return true;
+                  const q = glossarySearch.toLowerCase();
+                  return (
+                    term.term.toLowerCase().includes(q) ||
+                    term.termEn.toLowerCase().includes(q) ||
+                    term.definition.id.toLowerCase().includes(q) ||
+                    term.definition.en.toLowerCase().includes(q)
+                  );
+                })
+                .map((term) => (
+                  <div key={term.id} className="flex flex-col gap-1.5 py-4 sm:flex-row sm:gap-6">
+                    <div className="w-full shrink-0 sm:w-48">
+                      <p className="text-sm font-semibold text-zinc-900">{term.term}</p>
+                      <p className="text-xs text-zinc-400">{term.termEn}</p>
+                    </div>
+                    <p className="text-sm leading-6 text-zinc-600">
+                      {locale === "id" ? term.definition.id : term.definition.en}
+                    </p>
+                    {term.module ? (
+                      <span className="self-start rounded-full bg-[rgba(46,193,185,0.1)] px-2.5 py-1 text-[11px] font-semibold text-[var(--brand)] sm:ml-auto sm:shrink-0">
+                        {term.module}
+                      </span>
+                    ) : null}
+                  </div>
+                ))}
+              {glossaryTerms.filter((term) => {
+                if (!glossarySearch) return true;
+                const q = glossarySearch.toLowerCase();
+                return (
+                  term.term.toLowerCase().includes(q) ||
+                  term.termEn.toLowerCase().includes(q) ||
+                  term.definition.id.toLowerCase().includes(q) ||
+                  term.definition.en.toLowerCase().includes(q)
+                );
+              }).length === 0 ? (
+                <p className="py-8 text-center text-sm text-zinc-400">
+                  {locale === "id" ? "Tidak ada istilah yang cocok." : "No matching terms."}
+                </p>
+              ) : null}
+            </div>
           </section>
 
           <div>
