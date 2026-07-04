@@ -233,8 +233,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Core Chemistry Material",
       },
       body: {
-        id: "Pelajari konsep dasar zat adiktif dan psikotropika, siklus adiksi, serta dasar hukumnya di Indonesia melalui tiga tab berikut.",
-        en: "Study the basic concepts of addictive substances and psychotropics, the addiction cycle, and the Indonesian legal basis through the three tabs below.",
+        id: "Pelajari konsep dasar zat adiktif dan psikotropika, siklus adiksi, dasar hukumnya di Indonesia, serta bagaimana zat bekerja di dalam tubuh melalui empat tab berikut.",
+        en: "Study the basic concepts of addictive substances and psychotropics, the addiction cycle, the Indonesian legal basis, and how substances work in the body through the four tabs below.",
       },
       tabs: [
         {
@@ -385,6 +385,65 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
                 { id: "Rendah–sedang · legal bersyarat", en: "Low–moderate · conditionally legal" },
               ],
             ],
+          },
+        },
+        {
+          id: "farmakokinetik",
+          label: { id: "Farmakokinetik", en: "Pharmacokinetics" },
+          body: {
+            id: "ADME menjelaskan apa yang tubuh lakukan terhadap suatu zat sejak masuk hingga dikeluarkan kembali. Cara zat masuk ke tubuh sangat menentukan seberapa cepat dan seberapa kuat efeknya dirasakan — semakin cepat onset-nya, semakin besar potensi adiksinya. Farmakodinamika menjelaskan apa yang zat lakukan terhadap tubuh, terutama melalui interaksinya dengan reseptor di susunan saraf pusat.",
+            en: "ADME explains what the body does to a substance from entry to elimination. How a substance enters the body strongly determines how fast and how strongly its effect is felt — the faster the onset, the greater its addiction potential. Pharmacodynamics explains what a substance does to the body, mainly through its interaction with receptors in the central nervous system.",
+          },
+          table: {
+            headers: [
+              { id: "Tahap ADME", en: "ADME Stage" },
+              { id: "Penjelasan", en: "Explanation" },
+            ],
+            rows: [
+              [
+                { id: "A — Absorpsi", en: "A — Absorption" },
+                {
+                  id: "Cara masuk menentukan kecepatan efek (onset): inhalasi/IV dalam hitungan detik, sublingual 5–10 menit, oral 30–90 menit. Onset yang cepat memperkuat asosiasi reward di otak sehingga potensi adiksi lebih besar.",
+                  en: "The route of entry determines onset speed: inhalation/IV within seconds, sublingual 5–10 minutes, oral 30–90 minutes. A fast onset strengthens the brain's reward association, increasing addiction potential.",
+                },
+              ],
+              [
+                { id: "D — Distribusi", en: "D — Distribution" },
+                {
+                  id: "Zat lipofilik (THC, heroin, alkohol) menembus sawar darah-otak lebih mudah sehingga efeknya pada susunan saraf pusat lebih kuat. THC tersimpan di jaringan lemak hingga berminggu-minggu — dasar tes urin narkoba.",
+                  en: "Lipophilic substances (THC, heroin, alcohol) cross the blood-brain barrier more easily, producing stronger central nervous system effects. THC is stored in fat tissue for weeks — the basis of drug urine testing.",
+                },
+              ],
+              [
+                { id: "M — Metabolisme", en: "M — Metabolism" },
+                {
+                  id: "Hati adalah organ utama metabolisme. Kodein diubah menjadi morfin (metabolit aktif); kombinasi alkohol dan parasetamol dapat bersifat hepatotoksik. Enzim CYP450 membuat kecepatan metabolisme berbeda antarindividu.",
+                  en: "The liver is the main metabolic organ. Codeine is converted into morphine (an active metabolite); combining alcohol and paracetamol can be hepatotoxic. The CYP450 enzyme makes metabolism speed vary between individuals.",
+                },
+              ],
+              [
+                { id: "E — Ekskresi", en: "E — Excretion" },
+                {
+                  id: "Ginjal membuang metabolit melalui urin. Jendela deteksi berbeda-beda: alkohol 12–24 jam, metamfetamin 2–4 hari, ganja (THC) 3–30 hari karena tersimpan di jaringan lemak.",
+                  en: "The kidneys eliminate metabolites through urine. Detection windows vary: alcohol 12–24 hours, methamphetamine 2–4 days, cannabis (THC) 3–30 days because it is stored in fat tissue.",
+                },
+              ],
+              [
+                { id: "Mekanisme reseptor", en: "Receptor mechanism" },
+                {
+                  id: "Agonis penuh mengaktifkan reseptor sepenuhnya (morfin pada reseptor μ-opioid); agonis parsial mengaktifkan sebagian (LSD, buprenorfin); antagonis memblokir tanpa aktivasi (nalokson); blok reuptake menghambat transporter neurotransmiter (kokain); pelepas paksa memaksa pelepasan neurotransmiter (amfetamin, MDMA).",
+                  en: "A full agonist fully activates the receptor (morphine on μ-opioid receptors); a partial agonist activates it partially (LSD, buprenorphine); an antagonist blocks without activating (naloxone); a reuptake blocker inhibits the neurotransmitter transporter (cocaine); a forced releaser forces neurotransmitter release (amphetamine, MDMA).",
+                },
+              ],
+            ],
+          },
+          quote: {
+            arabic: "مَا أَسْكَرَ كَثِيرُهُ فَقَلِيلُهُ حَرَامٌ",
+            translation: {
+              id: "Sesuatu yang memabukkan dalam jumlah banyak, maka sedikitnya pun haram.",
+              en: "Whatever intoxicates in large amounts, its small amount is also forbidden.",
+            },
+            source: "HR. Abu Dawud no. 3681 & at-Tirmidzi no. 1865 — toleransi farmakologis (kebutuhan dosis yang terus meningkat) adalah bukti ilmiah dari kaidah ini",
           },
         },
       ],
