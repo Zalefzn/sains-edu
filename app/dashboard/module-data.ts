@@ -1,13 +1,12 @@
 export type Locale = "id" | "en";
 export type Level = "dasar" | "sedang" | "lanjut";
-export type ModuleCode = "M1" | "M2" | "M3" | "M4" | "M5" | "M6" | "M7";
+export type ModuleCode = "M1" | "M2" | "M3" | "M4" | "M5";
 export type LocalizedText = { id: string; en: string };
 export type ModuleItem = {
   code: ModuleCode;
   title: LocalizedText;
   summary: LocalizedText;
   prompt: LocalizedText;
-  pubchemCid?: number;
 };
 export type ExerciseQuestion = {
   id: string;
@@ -35,6 +34,27 @@ export type ModuleTab = {
   quote?: ModuleQuote;
 };
 
+export type DopamineComparisonItem = {
+  key: string;
+  label: LocalizedText;
+  widthPercent: number;
+  color: string;
+  resultLabel: LocalizedText;
+  description: LocalizedText;
+};
+
+export type DopamineChart = {
+  title: LocalizedText;
+  items: DopamineComparisonItem[];
+};
+
+export type MoleculeItem = {
+  key: string;
+  label: LocalizedText;
+  pubchemCid: number;
+  description: LocalizedText;
+};
+
 export type ModuleStep = {
   key:
     | "stimulus"
@@ -51,6 +71,8 @@ export type ModuleStep = {
   table?: ModuleTable;
   quotes?: ModuleQuote[];
   tabs?: ModuleTab[];
+  dopamineChart?: DopamineChart;
+  molecules?: MoleculeItem[];
 };
 
 export type ModuleProgressMap = Record<ModuleCode, number>;
@@ -58,55 +80,21 @@ export type ModuleProgressMap = Record<ModuleCode, number>;
 export const modules: ModuleItem[] = [
   {
     code: "M1",
-    pubchemCid: 89594, // Nicotine
     title: {
-      id: "Pengertian dan ruang lingkup zat adiktif dan psikotropika",
-      en: "Definition and scope of addictive substances and psychotropics",
+      id: "Pengertian, ruang lingkup, dan klasifikasi zat adiktif serta psikotropika",
+      en: "Definition, scope, and classification of addictive substances and psychotropics",
     },
     summary: {
-      id: "Mengenal definisi, contoh umum, dan ruang lingkup zat adiktif serta psikotropika dalam kehidupan sehari-hari.",
-      en: "Learn the definition, common examples, and scope of addictive substances and psychotropics in daily life.",
+      id: "Mengenal definisi, contoh umum, dan ruang lingkup zat adiktif serta psikotropika, dan mengklasifikasikannya ke dalam stimulan, depresan, halusinogen, dan opioid.",
+      en: "Learn the definition, common examples, and scope of addictive substances and psychotropics, and classify them into stimulants, depressants, hallucinogens, and opioids.",
     },
     prompt: {
-      id: "Mengapa memahami pengertian dan ruang lingkup zat adiktif penting untuk menjaga diri dan membuat keputusan yang aman?",
-      en: "Why is understanding the definition and scope of addictive substances important for self-protection and safe decision making?",
+      id: "Mengapa memahami pengertian, ruang lingkup, dan klasifikasi zat adiktif penting untuk menjaga diri dan membuat keputusan yang aman?",
+      en: "Why is understanding the definition, scope, and classification of addictive substances important for self-protection and safe decision making?",
     },
   },
   {
     code: "M2",
-    pubchemCid: 2519, // Caffeine
-    title: {
-      id: "Klasifikasi, contoh, dan ciri adiksi",
-      en: "Classification, examples, and signs of addiction",
-    },
-    summary: {
-      id: "Membedakan jenis zat, contoh penggunaan, dan tanda awal adiksi.",
-      en: "Differentiate substance types, examples of use, and early signs of addiction.",
-    },
-    prompt: {
-      id: "Bagaimana membedakan jenis zat adiktif dan mengenali ciri awal adiksi?",
-      en: "How do we distinguish addictive substance types and identify early signs of addiction?",
-    },
-  },
-  {
-    code: "M3",
-    pubchemCid: 702, // Ethanol
-    title: {
-      id: "Mekanisme kimia di tubuh (farmakokinetik dan farmakodinamika)",
-      en: "Chemical mechanisms in the body (pharmacokinetics and pharmacodynamics)",
-    },
-    summary: {
-      id: "Memahami bagaimana zat masuk, tersebar, dan bekerja di dalam tubuh.",
-      en: "Understand how substances enter, spread, and act in the body.",
-    },
-    prompt: {
-      id: "Apa dampak memahami farmakokinetik dan farmakodinamika terhadap literasi sains?",
-      en: "How does understanding pharmacokinetics and pharmacodynamics improve science literacy?",
-    },
-  },
-  {
-    code: "M4",
-    pubchemCid: 681, // Dopamine
     title: {
       id: "Sistem reward otak (dopamin, craving, tolerance, withdrawal)",
       en: "Brain reward system (dopamine, craving, tolerance, withdrawal)",
@@ -121,8 +109,7 @@ export const modules: ModuleItem[] = [
     },
   },
   {
-    code: "M5",
-    pubchemCid: 5288826, // Morphine
+    code: "M3",
     title: {
       id: "Dampak pada organ (otak, jantung, paru, hati) dan timeline efek",
       en: "Organ impact (brain, heart, lungs, liver) and effect timeline",
@@ -137,8 +124,7 @@ export const modules: ModuleItem[] = [
     },
   },
   {
-    code: "M6",
-    pubchemCid: 702, // Ethanol (halal literacy context)
+    code: "M4",
     title: {
       id: "Literasi halal (label, red flags, aman konsumsi)",
       en: "Halal literacy (labels, red flags, safe consumption)",
@@ -153,8 +139,7 @@ export const modules: ModuleItem[] = [
     },
   },
   {
-    code: "M7",
-    pubchemCid: 10836, // Methamphetamine
+    code: "M5",
     title: {
       id: "Studi kasus dan strategi menolak ajakan",
       en: "Case study and refusal strategy",
@@ -171,9 +156,9 @@ export const modules: ModuleItem[] = [
 ];
 
 export const priorityByLevel: Record<Level, ModuleCode[]> = {
-  dasar: ["M1", "M2", "M5", "M6"],
-  sedang: ["M2", "M3", "M4", "M5", "M6"],
-  lanjut: ["M3", "M4", "M6", "M7"],
+  dasar: ["M1", "M3", "M4"],
+  sedang: ["M1", "M2", "M3", "M4"],
+  lanjut: ["M1", "M2", "M4", "M5"],
 };
 
 export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
@@ -185,8 +170,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Stimulus",
       },
       body: {
-        id: "Di sekitar remaja terdapat rokok, vape, obat penenang, minuman berenergi, dan produk lain yang sering dianggap biasa. Tidak semua orang memahami mana yang termasuk zat adiktif, mana yang tergolong psikotropika, dan apa akibatnya bila digunakan tanpa pengetahuan yang benar.",
-        en: "Around teenagers there are cigarettes, vapes, sedatives, energy drinks, and other products often seen as ordinary. Not everyone understands which are addictive substances, which are psychotropics, and what happens when they are used without proper knowledge.",
+        id: "Di sekitar remaja terdapat rokok, vape, obat penenang, minuman berenergi, dan produk lain yang sering dianggap biasa. Tidak semua orang memahami mana yang termasuk zat adiktif, mana yang tergolong psikotropika, dan apa akibatnya bila digunakan tanpa pengetahuan yang benar. Dua produk yang terlihat mirip pun bisa memiliki kandungan dan risiko yang sangat berbeda — ada yang bersifat stimulan, ada yang menekan sistem saraf, ada yang mengubah persepsi, dan ada pula opioid yang bekerja pada reseptor nyeri, masing-masing dengan status hukum Islam yang berbeda.",
+        en: "Around teenagers there are cigarettes, vapes, sedatives, energy drinks, and other products often seen as ordinary. Not everyone understands which are addictive substances, which are psychotropics, and what happens when they are used without proper knowledge. Two products may even look similar yet have very different content and risk — some are stimulants, some depress the nervous system, some alter perception, and others are opioids acting on pain receptors — each with a different Islamic legal status.",
       },
     },
     {
@@ -196,8 +181,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Learning Goals + Halal Literacy Indicators",
       },
       body: {
-        id: "Kamu diharapkan mampu menjelaskan pengertian zat adiktif dan psikotropika, membedakan ruang lingkup keduanya, serta memahami pentingnya kehati-hatian saat menghadapi produk yang berpotensi menimbulkan ketergantungan.",
-        en: "You are expected to explain the definition of addictive substances and psychotropics, distinguish their scope, and understand the importance of caution when facing products that may cause dependency.",
+        id: "Kamu diharapkan mampu menjelaskan pengertian zat adiktif dan psikotropika, membedakan ruang lingkup keduanya, mengklasifikasikan zat psikoaktif ke dalam stimulan, depresan, halusinogen, dan opioid beserta contoh senyawa kimianya, serta memahami pentingnya kehati-hatian saat menghadapi produk yang berpotensi menimbulkan ketergantungan.",
+        en: "You are expected to explain the definition of addictive substances and psychotropics, distinguish their scope, classify psychoactive substances into stimulants, depressants, hallucinogens, and opioids with their chemical compound examples, and understand the importance of caution when facing products that may cause dependency.",
       },
       checkpoints: [
         {
@@ -211,6 +196,14 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         {
           id: "Mengidentifikasi perbedaan narkotika dan psikotropika berdasarkan dasar hukum di Indonesia.",
           en: "Identify the difference between narcotics and psychotropics based on Indonesian law.",
+        },
+        {
+          id: "Mengklasifikasikan zat adiktif ke dalam kelompok stimulan, depresan, halusinogen, dan opioid beserta contoh senyawa kimianya.",
+          en: "Classify addictive substances into stimulant, depressant, hallucinogen, and opioid groups along with their chemical compound examples.",
+        },
+        {
+          id: "Menghubungkan mekanisme kerja zat (agonis, antagonis, blok reuptake) dengan jenis efek yang ditimbulkan.",
+          en: "Connect a substance's mechanism of action (agonist, antagonist, reuptake blocker) with the type of effect it produces.",
         },
         {
           id: "Mengintegrasikan lima tujuan maqāṣid asy-syarī'ah sebagai dalil ilmiah dan syar'i pelarangan zat adiktif.",
@@ -233,8 +226,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Core Chemistry Material",
       },
       body: {
-        id: "Pelajari konsep dasar zat adiktif dan psikotropika, siklus adiksi, dasar hukumnya di Indonesia, serta bagaimana zat bekerja di dalam tubuh melalui empat tab berikut.",
-        en: "Study the basic concepts of addictive substances and psychotropics, the addiction cycle, the Indonesian legal basis, and how substances work in the body through the four tabs below.",
+        id: "Pelajari konsep dasar zat adiktif dan psikotropika, klasifikasi zat psikoaktif ke dalam stimulan, depresan, halusinogen, dan opioid, siklus adiksi, dasar hukumnya di Indonesia, serta bagaimana zat bekerja di dalam tubuh melalui delapan tab berikut.",
+        en: "Study the basic concepts of addictive substances and psychotropics, the classification of psychoactive substances into stimulants, depressants, hallucinogens, and opioids, the addiction cycle, the Indonesian legal basis, and how substances work in the body through the eight tabs below.",
       },
       tabs: [
         {
@@ -274,6 +267,215 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
                   id: "Reaksi fisik dan psikologis tidak nyaman (mual, tremor, kecemasan, depresi) ketika pemakaian dihentikan tiba-tiba.",
                   en: "Uncomfortable physical and psychological reactions (nausea, tremor, anxiety, depression) when use is suddenly stopped.",
                 },
+              ],
+            ],
+          },
+        },
+        {
+          id: "stimulan",
+          label: { id: "Stimulan", en: "Stimulants" },
+          body: {
+            id: "Meningkatkan aktivitas susunan saraf pusat dengan menaikkan kadar monoamin (dopamin, norepinefrin, serotonin) — melalui pemacuan pelepasan, penghambatan reuptake, atau inhibisi MAO. Efek: kewaspadaan meningkat, nafsu makan menurun, denyut jantung meningkat, euforia kuat. Waspadai stimulan tersembunyi: efedrin (dari Ephedra/Ma Huang) pada suplemen \"herbal\", pseudoefedrin pada obat flu, dan sibutramin pada produk pelangsing ilegal — semuanya tidak memiliki sertifikasi halal.",
+            en: "Increases central nervous system activity by raising monoamine levels (dopamine, norepinephrine, serotonin) — through triggering release, inhibiting reuptake, or MAO inhibition. Effects: increased alertness, reduced appetite, increased heart rate, strong euphoria. Watch for hidden stimulants: ephedrine (from Ephedra/Ma Huang) in \"herbal\" supplements, pseudoephedrine in flu medicine, and sibutramine in illegal slimming products — none of which carry halal certification.",
+          },
+          table: {
+            headers: [
+              { id: "Zat", en: "Substance" },
+              { id: "Rumus", en: "Formula" },
+              { id: "Mekanisme", en: "Mechanism" },
+              { id: "Ciri Adiksi", en: "Addiction Traits" },
+              { id: "Status Islam", en: "Islamic Status" },
+            ],
+            rows: [
+              [
+                { id: "Metamfetamin (sabu)", en: "Methamphetamine" },
+                { id: "C₁₀H₁₅N", en: "C₁₀H₁₅N" },
+                { id: "↑ Dopamin, NE, 5-HT · pemacuan & blok reuptake", en: "↑ Dopamine, NE, 5-HT · triggered release & reuptake block" },
+                { id: "Toleransi cepat, withdrawal berat", en: "Fast tolerance, severe withdrawal" },
+                { id: "Haram", en: "Haram" },
+              ],
+              [
+                { id: "Kokain", en: "Cocaine" },
+                { id: "C₁₇H₂₁NO₄", en: "C₁₇H₂₁NO₄" },
+                { id: "Blok reuptake DAT/NET/SERT", en: "DAT/NET/SERT reuptake blocker" },
+                { id: "Craving sangat kuat, relaps tinggi", en: "Very strong craving, high relapse rate" },
+                { id: "Haram", en: "Haram" },
+              ],
+              [
+                { id: "Amfetamin", en: "Amphetamine" },
+                { id: "C₉H₁₃N", en: "C₉H₁₃N" },
+                { id: "↑ Rilis monoamin dari vesikel", en: "↑ Monoamine release from vesicles" },
+                { id: "Toleransi, insomnia, paranoia", en: "Tolerance, insomnia, paranoia" },
+                { id: "Haram (non-medis)", en: "Haram (non-medical)" },
+              ],
+              [
+                { id: "Nikotin (rokok)", en: "Nicotine (cigarettes)" },
+                { id: "C₁₀H₁₄N₂", en: "C₁₀H₁₄N₂" },
+                { id: "Agonis reseptor nikotinik asetilkolin", en: "Nicotinic acetylcholine receptor agonist" },
+                { id: "Ketergantungan fisik sedang", en: "Moderate physical dependency" },
+                { id: "Makruh–haram", en: "Makruh–haram" },
+              ],
+              [
+                { id: "Kafein", en: "Caffeine" },
+                { id: "C₈H₁₀N₄O₂", en: "C₈H₁₀N₄O₂" },
+                { id: "Antagonis reseptor adenosin", en: "Adenosine receptor antagonist" },
+                { id: "Ketergantungan ringan, withdrawal kepala", en: "Mild dependency, headache withdrawal" },
+                { id: "Mubah (wajar)", en: "Mubah (in moderation)" },
+              ],
+            ],
+          },
+        },
+        {
+          id: "depresan",
+          label: { id: "Depresan", en: "Depressants" },
+          body: {
+            id: "Menekan aktivitas susunan saraf pusat dengan meningkatkan aktivitas GABA (neurotransmiter inhibitor utama) atau menghambat glutamat (eksitator). Efek: sedasi, relaksasi otot, anti-kecemasan, memperlambat pernapasan — overdosis dapat menyebabkan henti napas. Kombinasi alkohol, benzodiazepin, dan opioid (polifarmasi) adalah penyebab utama kematian overdosis karena efek sinergisnya menekan pusat pernapasan jauh melebihi dosis tunggal masing-masing zat.",
+            en: "Suppresses central nervous system activity by increasing GABA activity (the main inhibitory neurotransmitter) or blocking glutamate (excitatory). Effects: sedation, muscle relaxation, anti-anxiety, slowed breathing — overdose can cause respiratory arrest. Combining alcohol, benzodiazepines, and opioids (polypharmacy) is a leading cause of overdose death, since their synergistic effect suppresses the respiratory center far beyond any single substance's dose.",
+          },
+          table: {
+            headers: [
+              { id: "Zat", en: "Substance" },
+              { id: "Rumus", en: "Formula" },
+              { id: "Mekanisme", en: "Mechanism" },
+              { id: "Ciri Adiksi", en: "Addiction Traits" },
+              { id: "Status Islam", en: "Islamic Status" },
+            ],
+            rows: [
+              [
+                { id: "Alkohol (etanol)", en: "Alcohol (ethanol)" },
+                { id: "C₂H₅OH", en: "C₂H₅OH" },
+                { id: "↑ GABA-A · ↓ NMDA-glutamat", en: "↑ GABA-A · ↓ NMDA-glutamate" },
+                { id: "Toleransi cepat, withdrawal fatal (delirium tremens)", en: "Fast tolerance, fatal withdrawal (delirium tremens)" },
+                { id: "Haram mutlak", en: "Absolutely haram" },
+              ],
+              [
+                { id: "Benzodiazepin", en: "Benzodiazepines" },
+                { id: "Beragam", en: "Various" },
+                { id: "Agonis allosterik GABA-A", en: "GABA-A allosteric agonist" },
+                { id: "Ketergantungan fisik kuat, withdrawal kejang", en: "Strong physical dependency, seizure withdrawal" },
+                { id: "Haram (non-medis)", en: "Haram (non-medical)" },
+              ],
+              [
+                { id: "Barbiturat", en: "Barbiturates" },
+                { id: "Beragam", en: "Various" },
+                { id: "Potensiasi & aktivasi langsung GABA-A", en: "GABA-A potentiation & direct activation" },
+                { id: "Margin keamanan sempit, overdosis mudah", en: "Narrow safety margin, easy to overdose" },
+                { id: "Haram (non-medis)", en: "Haram (non-medical)" },
+              ],
+              [
+                { id: "GHB", en: "GHB" },
+                { id: "C₄H₈O₃", en: "C₄H₈O₃" },
+                { id: "Agonis GHB-R & GABA-B", en: "GHB-R & GABA-B agonist" },
+                { id: "Euforia kuat, amnesia, withdrawal berat", en: "Strong euphoria, amnesia, severe withdrawal" },
+                { id: "Haram", en: "Haram" },
+              ],
+            ],
+          },
+        },
+        {
+          id: "halusinogen",
+          label: { id: "Halusinogen", en: "Hallucinogens" },
+          body: {
+            id: "Bekerja terutama sebagai agonis parsial reseptor serotonin 5-HT₂A di korteks prefrontal, menyebabkan distorsi persepsi sensoris, halusinasi visual/auditori, perubahan batas diri, dan depersonalisasi. Beberapa juga memengaruhi sistem endocannabinoid (THC) atau antagonisme NMDA (ketamin).",
+            en: "Mainly acts as a partial agonist at serotonin 5-HT₂A receptors in the prefrontal cortex, causing sensory perception distortion, visual/auditory hallucinations, altered sense of self, and depersonalization. Some also affect the endocannabinoid system (THC) or act as NMDA antagonists (ketamine).",
+          },
+          table: {
+            headers: [
+              { id: "Zat", en: "Substance" },
+              { id: "Rumus", en: "Formula" },
+              { id: "Mekanisme", en: "Mechanism" },
+              { id: "Durasi Efek", en: "Effect Duration" },
+              { id: "Status Islam", en: "Islamic Status" },
+            ],
+            rows: [
+              [
+                { id: "LSD", en: "LSD" },
+                { id: "C₂₀H₂₅N₃O", en: "C₂₀H₂₅N₃O" },
+                { id: "Agonis 5-HT₂A & 5-HT₁A", en: "5-HT₂A & 5-HT₁A agonist" },
+                { id: "8–12 jam · flashback", en: "8–12 hours · flashbacks" },
+                { id: "Haram", en: "Haram" },
+              ],
+              [
+                { id: "Psilosibin (jamur)", en: "Psilocybin (mushrooms)" },
+                { id: "C₁₂H₁₇N₂O₄P", en: "C₁₂H₁₇N₂O₄P" },
+                { id: "Pro-drug → psilosin, 5-HT₂A", en: "Pro-drug → psilocin, 5-HT₂A" },
+                { id: "4–6 jam", en: "4–6 hours" },
+                { id: "Haram", en: "Haram" },
+              ],
+              [
+                { id: "Ganja (THC)", en: "Cannabis (THC)" },
+                { id: "C₂₁H₃₀O₂", en: "C₂₁H₃₀O₂" },
+                { id: "Agonis CB₁/CB₂ endocannabinoid", en: "CB₁/CB₂ endocannabinoid agonist" },
+                { id: "2–4 jam · tersimpan di lemak", en: "2–4 hours · stored in fat tissue" },
+                { id: "Haram", en: "Haram" },
+              ],
+              [
+                { id: "Ketamin", en: "Ketamine" },
+                { id: "C₁₃H₁₆ClNO", en: "C₁₃H₁₆ClNO" },
+                { id: "Antagonis NMDA · disosiatif", en: "NMDA antagonist · dissociative" },
+                { id: "1–2 jam", en: "1–2 hours" },
+                { id: "Haram (non-medis)", en: "Haram (non-medical)" },
+              ],
+              [
+                { id: "MDMA (ekstasi)", en: "MDMA (ecstasy)" },
+                { id: "C₁₁H₁₅NO₂", en: "C₁₁H₁₅NO₂" },
+                { id: "↑↑ 5-HT · agonis 5-HT₂A", en: "↑↑ 5-HT · 5-HT₂A agonist" },
+                { id: "3–5 jam · neurotoksik", en: "3–5 hours · neurotoxic" },
+                { id: "Haram", en: "Haram" },
+              ],
+            ],
+          },
+        },
+        {
+          id: "opioid",
+          label: { id: "Opioid", en: "Opioids" },
+          body: {
+            id: "Bekerja pada reseptor opioid endogen μ (mu), κ (kappa), δ (delta) di susunan saraf pusat dan perifer. Aktivasi μ menyebabkan euforia kuat, analgesik, dan depresi pernapasan. Sistem ini secara normal merespons endorfin dan enkefalin alami tubuh — opioid \"membajak\" sistem ini secara masif.",
+            en: "Acts on the body's endogenous opioid receptors μ (mu), κ (kappa), δ (delta) in the central and peripheral nervous system. μ activation causes strong euphoria, analgesia, and respiratory depression. This system normally responds to the body's natural endorphins and enkephalins — opioids \"hijack\" this system massively.",
+          },
+          table: {
+            headers: [
+              { id: "Zat", en: "Substance" },
+              { id: "Sumber", en: "Source" },
+              { id: "Potensi Relatif", en: "Relative Potency" },
+              { id: "Risiko Utama", en: "Main Risk" },
+              { id: "Status Islam", en: "Islamic Status" },
+            ],
+            rows: [
+              [
+                { id: "Morfin", en: "Morphine" },
+                { id: "Alami (opium)", en: "Natural (opium)" },
+                { id: "1× (referensi)", en: "1× (reference)" },
+                { id: "Adiksi fisik sangat kuat", en: "Very strong physical addiction" },
+                { id: "Haram (non-medis)", en: "Haram (non-medical)" },
+              ],
+              [
+                { id: "Heroin (diasetilmorfin)", en: "Heroin (diacetylmorphine)" },
+                { id: "Semi-sintetis", en: "Semi-synthetic" },
+                { id: "2–3× morfin", en: "2–3× morphine" },
+                { id: "Overdosis, HIV via jarum suntik", en: "Overdose, HIV via needle use" },
+                { id: "Haram mutlak", en: "Absolutely haram" },
+              ],
+              [
+                { id: "Oksikodon", en: "Oxycodone" },
+                { id: "Semi-sintetis", en: "Semi-synthetic" },
+                { id: "1,5× morfin", en: "1.5× morphine" },
+                { id: "Epidemi adiksi (AS)", en: "Addiction epidemic (US)" },
+                { id: "Haram (non-medis)", en: "Haram (non-medical)" },
+              ],
+              [
+                { id: "Fentanil", en: "Fentanyl" },
+                { id: "Sintetis", en: "Synthetic" },
+                { id: "100× morfin", en: "100× morphine" },
+                { id: "Overdosis sangat mudah, dosis sangat kecil", en: "Very easy overdose, very small doses" },
+                { id: "Haram (non-medis)", en: "Haram (non-medical)" },
+              ],
+              [
+                { id: "Kodein", en: "Codeine" },
+                { id: "Alami", en: "Natural" },
+                { id: "0,1× morfin", en: "0.1× morphine" },
+                { id: "Rendah · pro-drug morfin", en: "Low · morphine pro-drug" },
+                { id: "Boleh (resep dokter)", en: "Permitted (by prescription)" },
               ],
             ],
           },
@@ -455,8 +657,183 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Visualization",
       },
       body: {
-        id: "Struktur 3D nikotin berikut adalah salah satu contoh \"zat adiktif lain\" yang diatur UU No. 36/2009 — legal namun berstatus makruh–haram karena mengandung risiko ketergantungan.",
-        en: "The 3D structure below is nicotine, an example of an \"other addictive substance\" regulated under Law No. 36/2009 — legal, but makruh–haram in status due to its dependency risk.",
+        id: "Jelajahi struktur 3D dari zat-zat yang dibahas pada tabel klasifikasi di atas. Pilih salah satu zat untuk melihat model molekulnya secara interaktif.",
+        en: "Explore the 3D structures of the substances covered in the classification tables above. Pick a substance to view its molecule interactively.",
+      },
+      molecules: [
+        {
+          key: "sabu",
+          label: { id: "Metamfetamin (sabu)", en: "Methamphetamine" },
+          pubchemCid: 10836,
+          description: {
+            id: "C₁₀H₁₅N · Mekanisme: ↑ dopamin, NE, 5-HT — pemacuan pelepasan & blok reuptake. Ciri adiksi: toleransi cepat, withdrawal berat. Status Islam: Haram.",
+            en: "C₁₀H₁₅N · Mechanism: ↑ dopamine, NE, 5-HT — triggered release & reuptake block. Addiction traits: fast tolerance, severe withdrawal. Islamic status: Haram.",
+          },
+        },
+        {
+          key: "kokain",
+          label: { id: "Kokain", en: "Cocaine" },
+          pubchemCid: 446220,
+          description: {
+            id: "C₁₇H₂₁NO₄ · Mekanisme: blok reuptake DAT/NET/SERT. Ciri adiksi: craving sangat kuat, relaps tinggi. Status Islam: Haram.",
+            en: "C₁₇H₂₁NO₄ · Mechanism: DAT/NET/SERT reuptake blocker. Addiction traits: very strong craving, high relapse rate. Islamic status: Haram.",
+          },
+        },
+        {
+          key: "amfetamin",
+          label: { id: "Amfetamin", en: "Amphetamine" },
+          pubchemCid: 3007,
+          description: {
+            id: "C₉H₁₃N · Mekanisme: ↑ rilis monoamin dari vesikel. Ciri adiksi: toleransi, insomnia, paranoia. Status Islam: Haram (non-medis).",
+            en: "C₉H₁₃N · Mechanism: ↑ monoamine release from vesicles. Addiction traits: tolerance, insomnia, paranoia. Islamic status: Haram (non-medical).",
+          },
+        },
+        {
+          key: "nikotin",
+          label: { id: "Nikotin", en: "Nicotine" },
+          pubchemCid: 89594,
+          description: {
+            id: "C₁₀H₁₄N₂ · Mekanisme: agonis reseptor nikotinik asetilkolin. Ciri adiksi: ketergantungan fisik sedang. Status Islam: Makruh–haram.",
+            en: "C₁₀H₁₄N₂ · Mechanism: nicotinic acetylcholine receptor agonist. Addiction traits: moderate physical dependency. Islamic status: Makruh–haram.",
+          },
+        },
+        {
+          key: "kafein",
+          label: { id: "Kafein", en: "Caffeine" },
+          pubchemCid: 2519,
+          description: {
+            id: "C₈H₁₀N₄O₂ · Mekanisme: antagonis reseptor adenosin. Ciri adiksi: ketergantungan ringan, withdrawal kepala. Status Islam: Mubah (wajar).",
+            en: "C₈H₁₀N₄O₂ · Mechanism: adenosine receptor antagonist. Addiction traits: mild dependency, headache withdrawal. Islamic status: Mubah (permissible).",
+          },
+        },
+        {
+          key: "ghb",
+          label: { id: "GHB", en: "GHB" },
+          pubchemCid: 10413,
+          description: {
+            id: "C₄H₈O₃ · Mekanisme: agonis GHB-R & GABA-B. Ciri adiksi: euforia kuat, amnesia, withdrawal berat. Status Islam: Haram.",
+            en: "C₄H₈O₃ · Mechanism: GHB-R & GABA-B agonist. Addiction traits: strong euphoria, amnesia, severe withdrawal. Islamic status: Haram.",
+          },
+        },
+        {
+          key: "lsd",
+          label: { id: "LSD", en: "LSD" },
+          pubchemCid: 5761,
+          description: {
+            id: "C₂₀H₂₅N₃O · Mekanisme: agonis 5-HT₂A & 5-HT₁A. Durasi efek: 8–12 jam, dapat memicu flashback. Status Islam: Haram.",
+            en: "C₂₀H₂₅N₃O · Mechanism: 5-HT₂A & 5-HT₁A agonist. Effect duration: 8–12 hours, can trigger flashbacks. Islamic status: Haram.",
+          },
+        },
+        {
+          key: "psilosibin",
+          label: { id: "Psilosibin", en: "Psilocybin" },
+          pubchemCid: 10624,
+          description: {
+            id: "C₁₂H₁₇N₂O₄P · Mekanisme: pro-drug → psilosin, agonis 5-HT₂A. Durasi efek: 4–6 jam. Status Islam: Haram.",
+            en: "C₁₂H₁₇N₂O₄P · Mechanism: pro-drug → psilocin, 5-HT₂A agonist. Effect duration: 4–6 hours. Islamic status: Haram.",
+          },
+        },
+        {
+          key: "ganja",
+          label: { id: "Ganja (THC)", en: "Cannabis (THC)" },
+          pubchemCid: 16078,
+          description: {
+            id: "C₂₁H₃₀O₂ · Mekanisme: agonis CB₁/CB₂ endocannabinoid. Durasi efek: 2–4 jam, tersimpan di jaringan lemak. Status Islam: Haram.",
+            en: "C₂₁H₃₀O₂ · Mechanism: CB₁/CB₂ endocannabinoid agonist. Effect duration: 2–4 hours, stored in fat tissue. Islamic status: Haram.",
+          },
+        },
+        {
+          key: "ketamin",
+          label: { id: "Ketamin", en: "Ketamine" },
+          pubchemCid: 3821,
+          description: {
+            id: "C₁₃H₁₆ClNO · Mekanisme: antagonis NMDA, bersifat disosiatif. Durasi efek: 1–2 jam. Status Islam: Haram (non-medis).",
+            en: "C₁₃H₁₆ClNO · Mechanism: NMDA antagonist, dissociative. Effect duration: 1–2 hours. Islamic status: Haram (non-medical).",
+          },
+        },
+        {
+          key: "mdma",
+          label: { id: "MDMA (ekstasi)", en: "MDMA (ecstasy)" },
+          pubchemCid: 1615,
+          description: {
+            id: "C₁₁H₁₅NO₂ · Mekanisme: ↑↑ serotonin, agonis 5-HT₂A. Durasi efek: 3–5 jam, bersifat neurotoksik. Status Islam: Haram.",
+            en: "C₁₁H₁₅NO₂ · Mechanism: ↑↑ serotonin, 5-HT₂A agonist. Effect duration: 3–5 hours, neurotoxic. Islamic status: Haram.",
+          },
+        },
+      ],
+      dopamineChart: {
+        title: {
+          id: "Bandingkan kadar dopamin berbagai zat (% di atas baseline normal)",
+          en: "Compare dopamine levels across substances (% above normal baseline)",
+        },
+        items: [
+          {
+            key: "normal",
+            label: { id: "Normal", en: "Normal" },
+            widthPercent: 12,
+            color: "#059669",
+            resultLabel: { id: "Baseline", en: "Baseline" },
+            description: {
+              id: "Kondisi baseline normal — cukup untuk motivasi dan fokus sehari-hari tanpa efek samping. Ini adalah kadar dopamin yang seharusnya dipertahankan.",
+              en: "Normal baseline condition — enough for everyday motivation and focus without side effects. This is the dopamine level that should be maintained.",
+            },
+          },
+          {
+            key: "kafein",
+            label: { id: "Kafein", en: "Caffeine" },
+            widthPercent: 32,
+            color: "#059669",
+            resultLabel: { id: "+40%", en: "+40%" },
+            description: {
+              id: "Kafein: antagonis adenosin → meningkatkan dopamin moderat (~+40%). Withdrawal ringan berupa sakit kepala. Hukum: mubah dalam jumlah wajar.",
+              en: "Caffeine: an adenosine antagonist → moderately raises dopamine (~+40%). Mild withdrawal in the form of headaches. Ruling: mubah (permissible) in reasonable amounts.",
+            },
+          },
+          {
+            key: "nikotin",
+            label: { id: "Nikotin", en: "Nicotine" },
+            widthPercent: 55,
+            color: "#d97706",
+            resultLabel: { id: "+100%", en: "+100%" },
+            description: {
+              id: "Nikotin: agonis nikotinik → dopamin ~+100%. Ketergantungan fisik sedang. Risiko kanker paru, penyakit jantung jangka panjang sangat tinggi. Hukum: makruh–haram.",
+              en: "Nicotine: a nicotinic agonist → dopamine ~+100%. Moderate physical dependency. Very high long-term risk of lung cancer and heart disease. Ruling: makruh–haram.",
+            },
+          },
+          {
+            key: "kokain",
+            label: { id: "Kokain", en: "Cocaine" },
+            widthPercent: 82,
+            color: "#dc2626",
+            resultLabel: { id: "+350%", en: "+350%" },
+            description: {
+              id: "Kokain: blok reuptake DAT/NET/SERT → lonjakan dopamin +350%. Craving sangat kuat, relaps tinggi. Toksik jantung bahkan pada dosis pertama. Hukum: haram.",
+              en: "Cocaine: blocks DAT/NET/SERT reuptake → a dopamine surge of +350%. Very strong craving, high relapse rate. Cardiotoxic even on first use. Ruling: haram.",
+            },
+          },
+          {
+            key: "sabu",
+            label: { id: "Sabu", en: "Methamphetamine" },
+            widthPercent: 95,
+            color: "#991b1b",
+            resultLabel: { id: "+500%", en: "+500%" },
+            description: {
+              id: "Metamfetamin (sabu): blok reuptake + pacu pelepasan masif → dopamin +500%. Kerusakan dopaminergik permanen, psikosis. Hukum: haram.",
+              en: "Methamphetamine: reuptake block plus massive forced release → dopamine +500%. Permanent dopaminergic damage, psychosis. Ruling: haram.",
+            },
+          },
+          {
+            key: "heroin",
+            label: { id: "Heroin", en: "Heroin" },
+            widthPercent: 92,
+            color: "#991b1b",
+            resultLabel: { id: "+480%", en: "+480%" },
+            description: {
+              id: "Heroin: aktivasi μ-opioid masif → lonjakan dopamin +480% dalam detik (IV). Overdosis dari dosis sangat kecil. Hukum: haram mutlak.",
+              en: "Heroin: massive μ-opioid activation → a dopamine surge of +480% within seconds (IV). Overdose from a very small dose. Ruling: absolutely haram.",
+            },
+          },
+        ],
       },
     },
     {
@@ -466,8 +843,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Islamic Values Panel",
       },
       body: {
-        id: "Menjaga akal dan jiwa termasuk tujuan utama syariat (maqāṣid asy-syarī'ah). Memahami pengertian zat adiktif membantu seseorang menghindari hal yang merusak kemampuan berpikir, mengurangi kendali diri, dan membahayakan kesehatan.",
-        en: "Protecting the mind and soul is among the key objectives of syariah (maqāṣid asy-syarī'ah). Understanding addictive substances helps a person avoid what harms thinking ability, reduces self-control, and endangers health.",
+        id: "Menjaga akal dan jiwa termasuk tujuan utama syariat (maqāṣid asy-syarī'ah). Memahami pengertian zat adiktif membantu seseorang menghindari hal yang merusak kemampuan berpikir, mengurangi kendali diri, dan membahayakan kesehatan. Kemampuan membedakan jenis zat dan status hukumnya — dari mubah, makruh, hingga haram — turut membantu seseorang menjaga diri dari kebiasaan yang merusak akal dan membuka jalan pada perilaku yang tidak bertanggung jawab.",
+        en: "Protecting the mind and soul is among the key objectives of syariah (maqāṣid asy-syarī'ah). Understanding addictive substances helps a person avoid what harms thinking ability, reduces self-control, and endangers health. The ability to distinguish substance types and their legal status — from permissible, to disliked, to forbidden — also helps a person guard against habits that damage the mind and lead to irresponsible behavior.",
       },
       table: {
         headers: [
@@ -560,8 +937,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Halal Literacy Panel",
       },
       body: {
-        id: "Terdaftar di BPOM tidak sama dengan halal. BPOM menjamin keamanan kimia dan mikrobiologi; MUI menjamin kehalalan berdasarkan standar syariah. Sebuah produk dapat lolos BPOM namun tetap mengandung bahan haram atau syubhat — inilah dasar pentingnya literasi halal dalam memilih produk konsumsi.",
-        en: "Being registered with BPOM (Indonesia's food and drug agency) is not the same as being halal. BPOM guarantees chemical and microbiological safety; MUI (halal authority) certifies halal status based on syariah standards. A product can pass BPOM review yet still contain haram or syubhat (doubtful) ingredients — this is why halal literacy matters when choosing consumer products.",
+        id: "Terdaftar di BPOM tidak sama dengan halal. BPOM menjamin keamanan kimia dan mikrobiologi; MUI menjamin kehalalan berdasarkan standar syariah. Sebuah produk dapat lolos BPOM namun tetap mengandung bahan haram atau syubhat — inilah dasar pentingnya literasi halal dalam memilih produk konsumsi. Suatu produk tidak cukup dinilai dari kemasan atau popularitasnya: kandungan, efek, dan potensi penyalahgunaan harus menjadi pertimbangan sebelum memutuskan untuk mengonsumsi, termasuk mengenali stimulan tersembunyi berlabel \"herbal alami\" yang sebenarnya tidak memiliki sertifikasi halal.",
+        en: "Being registered with BPOM (Indonesia's food and drug agency) is not the same as being halal. BPOM guarantees chemical and microbiological safety; MUI (halal authority) certifies halal status based on syariah standards. A product can pass BPOM review yet still contain haram or syubhat (doubtful) ingredients — this is why halal literacy matters when choosing consumer products. A product cannot be judged only by its packaging or popularity: its ingredients, effects, and potential for misuse must be considered before deciding to consume it, including recognizing hidden stimulants labeled \"all-natural herbal\" that actually lack halal certification.",
       },
       table: {
         headers: [
@@ -618,8 +995,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Quick Practice",
       },
       body: {
-        id: "Jawablah perbedaan pokok antara zat adiktif dan psikotropika, sebutkan contoh yang sering ditemui, dan jelaskan alasan mengapa mempelajari ruang lingkup keduanya penting bagi remaja.",
-        en: "Answer the key difference between addictive substances and psychotropics, mention common examples, and explain why learning their scope is important for teenagers.",
+        id: "Jawablah perbedaan pokok antara zat adiktif dan psikotropika, kelompokkan beberapa contoh zat ke dalam kategori yang tepat, dan jelaskan alasan mengapa mempelajari ruang lingkup serta klasifikasi keduanya penting bagi remaja.",
+        en: "Answer the key difference between addictive substances and psychotropics, group several substance examples into the correct categories, and explain why learning their scope and classification is important for teenagers.",
       },
       checkpoints: [
         {
@@ -629,6 +1006,14 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         {
           id: "Jelaskan mengapa psikotropika perlu dipahami sejak awal.",
           en: "Explain why psychotropics need to be understood from the beginning.",
+        },
+        {
+          id: "Sebutkan satu contoh zat stimulan dan satu contoh zat depresan.",
+          en: "Name one stimulant and one depressant example.",
+        },
+        {
+          id: "Tuliskan dua ciri awal adiksi.",
+          en: "Write two early signs of addiction.",
         },
       ],
       questions: [
@@ -674,97 +1059,6 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           ],
           correct: "d",
         },
-      ],
-    },
-  ],
-  M2: [
-    {
-      key: "stimulus",
-      title: {
-        id: "Stimulus",
-        en: "Stimulus",
-      },
-      body: {
-        id: "Dua produk dapat terlihat mirip, tetapi kandungan dan risikonya berbeda. Ada produk yang menimbulkan efek stimulan, ada yang menekan sistem saraf, dan ada pula yang menimbulkan gejala adiksi bila digunakan terus-menerus.",
-        en: "Two products may look similar, but their content and risks are different. Some are stimulants, some depress the nervous system, and some can trigger addiction symptoms when used continuously.",
-      },
-    },
-    {
-      key: "goal",
-      title: {
-        id: "Tujuan Belajar + Indikator Literasi Halal",
-        en: "Learning Goals + Halal Literacy Indicators",
-      },
-      body: {
-        id: "Kamu diharapkan mampu mengklasifikasikan zat adiktif, menyebutkan contohnya, dan mengenali ciri adiksi agar tidak salah menilai suatu produk atau perilaku konsumsi.",
-        en: "You are expected to classify addictive substances, name examples, and recognize the signs of addiction so you do not misjudge a product or consumption behavior.",
-      },
-    },
-    {
-      key: "material",
-      title: {
-        id: "Materi Inti Kimia",
-        en: "Core Chemistry Material",
-      },
-      body: {
-        id: "Zat adiktif dapat diklasifikasikan berdasarkan asal, efek, dan bentuk pemakaian. Contohnya meliputi nikotin, alkohol, kafein, dan zat terlarang tertentu. Ciri adiksi dapat dikenali dari keinginan kuat untuk menggunakan lagi, toleransi meningkat, dan kesulitan berhenti.",
-        en: "Addictive substances can be classified by origin, effect, and form of use. Examples include nicotine, alcohol, caffeine, and certain illicit drugs. Signs of addiction include a strong urge to use again, increased tolerance, and difficulty stopping.",
-      },
-    },
-    {
-      key: "visual",
-      title: {
-        id: "Visualisasi",
-        en: "Visualization",
-      },
-      body: {
-        id: "Visualisasi memperlihatkan tabel klasifikasi yang membandingkan contoh zat, efek dominan, bentuk penggunaan, serta tanda awal yang menunjukkan seseorang mulai mengalami adiksi.",
-        en: "The visualization shows a classification table comparing examples of substances, dominant effects, forms of use, and early signs that indicate a person is beginning to experience addiction.",
-      },
-    },
-    {
-      key: "value",
-      title: {
-        id: "Panel Nilai Islam",
-        en: "Islamic Values Panel",
-      },
-      body: {
-        id: "Kemampuan membedakan jenis zat dan ciri adiksi membantu seseorang menjaga diri dari kebiasaan yang merusak akal, merugikan tubuh, dan membuka jalan pada perilaku yang tidak bertanggung jawab.",
-        en: "The ability to distinguish substance types and addiction signs helps a person protect themselves from habits that harm the mind, damage the body, and open the way to irresponsible behavior.",
-      },
-    },
-    {
-      key: "halal",
-      title: {
-        id: "Panel Literasi Halal",
-        en: "Halal Literacy Panel",
-      },
-      body: {
-        id: "Dalam literasi halal, siswa belajar bahwa suatu produk tidak cukup dinilai dari kemasan atau popularitasnya. Kandungan, efek, dan potensi penyalahgunaan harus menjadi pertimbangan sebelum memutuskan untuk mengonsumsi.",
-        en: "In halal literacy, students learn that a product cannot be judged only by packaging or popularity. Its ingredients, effects, and potential misuse must be considered before deciding to consume it.",
-      },
-    },
-    {
-      key: "exercise",
-      title: {
-        id: "Latihan Cepat",
-        en: "Quick Practice",
-      },
-      body: {
-        id: "Kelompokkan beberapa contoh zat ke dalam kategori yang tepat, lalu identifikasi tanda awal adiksi yang dapat terlihat pada seseorang dalam kehidupan sehari-hari.",
-        en: "Group several examples of substances into the correct categories, then identify early signs of addiction that may be seen in someone’s daily life.",
-      },
-      checkpoints: [
-        {
-          id: "Sebutkan satu contoh zat stimulan dan satu contoh zat depresan.",
-          en: "Name one stimulant and one depressant example.",
-        },
-        {
-          id: "Tuliskan dua ciri awal adiksi.",
-          en: "Write two early signs of addiction.",
-        },
-      ],
-      questions: [
         {
           id: "m2q1",
           prompt: {
@@ -810,140 +1104,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
       ],
     },
   ],
-  M3: [
-    {
-      key: "stimulus",
-      title: {
-        id: "Stimulus",
-        en: "Stimulus",
-      },
-      body: {
-        id: "Saat suatu zat masuk ke tubuh, efeknya tidak muncul secara acak. Ada proses penyerapan, penyebaran, perubahan, hingga pengeluaran yang memengaruhi seberapa cepat dan seberapa kuat zat itu bekerja.",
-        en: "When a substance enters the body, its effects do not appear randomly. There are stages of absorption, distribution, change, and elimination that affect how quickly and strongly the substance works.",
-      },
-    },
-    {
-      key: "goal",
-      title: {
-        id: "Tujuan Belajar + Indikator Literasi Halal",
-        en: "Learning Goals + Halal Literacy Indicators",
-      },
-      body: {
-        id: "Kamu diharapkan memahami farmakokinetik dan farmakodinamika secara sederhana agar dapat menjelaskan bagaimana zat masuk, bekerja, dan memengaruhi tubuh.",
-        en: "You are expected to understand pharmacokinetics and pharmacodynamics in a simple way so you can explain how a substance enters, works in, and affects the body.",
-      },
-    },
-    {
-      key: "material",
-      title: {
-        id: "Materi Inti Kimia",
-        en: "Core Chemistry Material",
-      },
-      body: {
-        id: "Farmakokinetik membahas apa yang tubuh lakukan terhadap zat: absorpsi, distribusi, metabolisme, dan ekskresi. Farmakodinamika membahas apa yang zat lakukan terhadap tubuh, misalnya memengaruhi reseptor saraf, menimbulkan efek rangsang, tenang, atau perubahan perilaku.",
-        en: "Pharmacokinetics explains what the body does to a substance: absorption, distribution, metabolism, and excretion. Pharmacodynamics explains what the substance does to the body, such as affecting nerve receptors, producing stimulation, sedation, or behavior changes.",
-      },
-    },
-    {
-      key: "visual",
-      title: {
-        id: "Visualisasi",
-        en: "Visualization",
-      },
-      body: {
-        id: "Visualisasi menggambarkan jalur zat dari titik masuk ke aliran darah, menuju organ target, lalu diproses hati dan dikeluarkan tubuh. Diagram ini membantu siswa memahami mengapa efek zat bisa berbeda pada tiap orang.",
-        en: "The visualization shows a substance pathway from entry point to bloodstream, then to target organs, and finally being processed by the liver and removed from the body. This diagram helps students understand why effects can differ between individuals.",
-      },
-    },
-    {
-      key: "value",
-      title: {
-        id: "Panel Nilai Islam",
-        en: "Islamic Values Panel",
-      },
-      body: {
-        id: "Memahami mekanisme kerja zat membuat seseorang lebih sadar bahwa tubuh adalah amanah. Setiap zat yang masuk membawa konsekuensi, sehingga keputusan konsumsi harus didasari ilmu dan tanggung jawab.",
-        en: "Understanding how substances work helps a person realize that the body is a trust. Every substance entering the body has consequences, so consumption decisions must be based on knowledge and responsibility.",
-      },
-    },
-    {
-      key: "halal",
-      title: {
-        id: "Panel Literasi Halal",
-        en: "Halal Literacy Panel",
-      },
-      body: {
-        id: "Literasi halal mendorong siswa untuk mempertanyakan asal zat, prosesnya dalam tubuh, dan dampaknya. Produk yang legal belum tentu tayyib jika berisiko menimbulkan mudarat serius bagi kesehatan.",
-        en: "Halal literacy encourages students to question a substance’s origin, its process in the body, and its effects. A legal product is not always tayyib if it carries serious health risks.",
-      },
-    },
-    {
-      key: "exercise",
-      title: {
-        id: "Latihan Cepat",
-        en: "Quick Practice",
-      },
-      body: {
-        id: "Jelaskan perbedaan farmakokinetik dan farmakodinamika, lalu uraikan secara singkat perjalanan suatu zat sejak masuk ke tubuh sampai dikeluarkan kembali.",
-        en: "Explain the difference between pharmacokinetics and pharmacodynamics, then briefly describe the journey of a substance from entering the body until it is removed again.",
-      },
-      checkpoints: [
-        {
-          id: "Apa yang dimaksud absorpsi?",
-          en: "What is absorption?",
-        },
-        {
-          id: "Mengapa zat yang sama dapat memberi efek berbeda pada orang yang berbeda?",
-          en: "Why can the same substance have different effects on different people?",
-        },
-      ],
-      questions: [
-        {
-          id: "m3q1",
-          prompt: {
-            id: "Farmakokinetik membahas...",
-            en: "Pharmacokinetics explains...",
-          },
-          options: [
-            { value: "a", label: { id: "Apa yang zat lakukan terhadap tubuh", en: "What the substance does to the body" } },
-            { value: "b", label: { id: "Cara membuat senyawa kimia di laboratorium", en: "How to synthesize chemical compounds in the laboratory" } },
-            { value: "c", label: { id: "Apa yang tubuh lakukan terhadap zat: absorpsi, distribusi, metabolisme, dan ekskresi", en: "What the body does to the substance: absorption, distribution, metabolism, and excretion" } },
-            { value: "d", label: { id: "Dampak psikologis penggunaan obat secara jangka panjang", en: "The psychological effects of long-term drug use" } },
-          ],
-          correct: "c",
-        },
-        {
-          id: "m3q2",
-          prompt: {
-            id: "Hati memiliki peran penting dalam farmakokinetik karena...",
-            en: "The liver plays an important role in pharmacokinetics because it...",
-          },
-          options: [
-            { value: "a", label: { id: "Hati memproduksi dopamin dan serotonin", en: "Produces dopamine and serotonin" } },
-            { value: "b", label: { id: "Hati memproses dan mendetoksifikasi zat yang masuk ke tubuh", en: "Processes and detoxifies substances entering the body" } },
-            { value: "c", label: { id: "Hati menyimpan semua zat asing untuk digunakan kemudian", en: "Stores all foreign substances for later use" } },
-            { value: "d", label: { id: "Hati mengatur tekanan darah saat zat masuk ke tubuh", en: "Regulates blood pressure when substances enter the body" } },
-          ],
-          correct: "b",
-        },
-        {
-          id: "m3q3",
-          prompt: {
-            id: "Mengapa efek zat yang sama dapat berbeda pada setiap orang?",
-            en: "Why can the same substance have different effects on different people?",
-          },
-          options: [
-            { value: "a", label: { id: "Karena zat bekerja secara acak tanpa pola yang jelas", en: "Because the substance works randomly with no clear pattern" } },
-            { value: "b", label: { id: "Karena warna dan bentuk zat memengaruhi kekuatannya", en: "Because the color and form of the substance affect its potency" } },
-            { value: "c", label: { id: "Karena perbedaan metabolisme, usia, berat badan, dan kondisi kesehatan individu", en: "Because of differences in individual metabolism, age, weight, and health condition" } },
-            { value: "d", label: { id: "Karena hanya perempuan yang memiliki reseptor aktif di saraf pusat", en: "Because only women have active receptors in the central nervous system" } },
-          ],
-          correct: "c",
-        },
-      ],
-    },
-  ],
-  M4: [
+  M2: [
     {
       key: "stimulus",
       title: {
@@ -1075,7 +1236,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
       ],
       questions: [
         {
-          id: "m4q1",
+          id: "m2q1",
           prompt: {
             id: "Dopamin dalam sistem reward otak berfungsi sebagai...",
             en: "Dopamine in the brain reward system functions as...",
@@ -1089,7 +1250,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           correct: "b",
         },
         {
-          id: "m4q2",
+          id: "m2q2",
           prompt: {
             id: "Tolerance pada penggunaan zat terjadi ketika...",
             en: "Tolerance in substance use occurs when...",
@@ -1103,7 +1264,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           correct: "c",
         },
         {
-          id: "m4q3",
+          id: "m2q3",
           prompt: {
             id: "Withdrawal terjadi ketika...",
             en: "Withdrawal occurs when...",
@@ -1119,7 +1280,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
       ],
     },
   ],
-  M5: [
+  M3: [
     {
       key: "stimulus",
       title: {
@@ -1127,8 +1288,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Stimulus",
       },
       body: {
-        id: "Efek zat adiktif tidak hanya dirasakan sesaat. Dalam jangka pendek mungkin muncul perubahan detak jantung, konsentrasi, atau napas. Dalam jangka panjang, organ seperti otak, jantung, paru, dan hati dapat mengalami kerusakan.",
-        en: "The effects of addictive substances are not only felt briefly. In the short term there may be changes in heart rate, concentration, or breathing. In the long term, organs such as the brain, heart, lungs, and liver can be damaged.",
+        id: "Seorang pengguna narkoba jangka panjang terlihat menua lebih cepat, sering sakit, dan mengalami gangguan memori parah. Di sisi lain, bayi yang lahir dari ibu pecandu heroin mengalami gejala withdrawal sejak hari pertama kelahiran. Organ apa saja yang paling terdampak? Seberapa parah? Apakah kerusakan ini bisa pulih?",
+        en: "A long-term drug user appears to age faster, gets sick often, and suffers severe memory impairment. Meanwhile, a baby born to a heroin-addicted mother shows withdrawal symptoms from the first day of life. Which organs are most affected? How severe is the damage? Can it heal?",
       },
     },
     {
@@ -1138,8 +1299,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Learning Goals + Halal Literacy Indicators",
       },
       body: {
-        id: "Kamu diharapkan mampu menjelaskan dampak zat adiktif pada organ utama dan membedakan efek jangka pendek serta jangka panjangnya.",
-        en: "You are expected to explain the effects of addictive substances on major organs and distinguish between short-term and long-term effects.",
+        id: "Kamu diharapkan mampu mengidentifikasi dampak zat adiktif pada organ-organ utama serta menganalisis timeline kerusakan dan tingkat reversibilitasnya, lalu menghubungkan hifzh an-nafs (menjaga jiwa) dengan kewajiban ilmiah menjaga kesehatan organ tubuh.",
+        en: "You are expected to identify addictive substance effects on major organs and analyze the damage timeline and its reversibility, then connect hifzh an-nafs (protecting life) with the scientific duty to protect organ health.",
       },
     },
     {
@@ -1149,9 +1310,88 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Core Chemistry Material",
       },
       body: {
-        id: "Otak dapat mengalami gangguan fokus dan kontrol diri. Jantung dapat bekerja lebih berat atau tidak teratur. Paru-paru dapat terganggu dalam pertukaran gas, sedangkan hati bekerja lebih keras dalam metabolisme dan detoksifikasi. Timeline efek membantu siswa melihat bahwa dampak dapat bertahap namun serius.",
-        en: "The brain may suffer from impaired focus and self-control. The heart may work harder or irregularly. The lungs may experience disrupted gas exchange, while the liver works harder in metabolism and detoxification. The effect timeline helps students see that the damage can be gradual but serious.",
+        id: "Setiap organ memiliki kerentanan berbeda terhadap zat adiktif. Pelajari peta dampak pada organ utama serta timeline kerusakan dari akut hingga permanen melalui dua tab berikut.",
+        en: "Each organ has a different vulnerability to addictive substances. Study the impact map on major organs and the damage timeline from acute to permanent, through the two tabs below.",
       },
+      tabs: [
+        {
+          id: "peta-organ",
+          label: { id: "Peta Organ", en: "Organ Map" },
+          body: {
+            id: "Semakin lama dan intens paparan suatu zat, semakin besar pula kemungkinan kerusakan bersifat permanen dan tidak bisa dipulihkan.",
+            en: "The longer and more intense the exposure to a substance, the greater the likelihood that the damage becomes permanent and irreversible.",
+          },
+          table: {
+            headers: [
+              { id: "Organ", en: "Organ" },
+              { id: "Dampak Utama", en: "Main Impact" },
+            ],
+            rows: [
+              [
+                { id: "Otak", en: "Brain" },
+                { id: "Atrofi korteks prefrontal, kerusakan dopaminergik, gangguan memori & kognitif jangka panjang.", en: "Prefrontal cortex atrophy, dopaminergic damage, long-term memory and cognitive impairment." },
+              ],
+              [
+                { id: "Jantung", en: "Heart" },
+                { id: "Aritmia, kardiomiopati, hipertensi, risiko serangan jantung (stimulan & kokain).", en: "Arrhythmia, cardiomyopathy, hypertension, heart attack risk (stimulants & cocaine)." },
+              ],
+              [
+                { id: "Paru-paru", en: "Lungs" },
+                { id: "PPOK, kanker paru, pneumonia aspirasi (opioid), kerusakan alveolar (inhalasi).", en: "COPD, lung cancer, aspiration pneumonia (opioids), alveolar damage (inhalation)." },
+              ],
+              [
+                { id: "Hati", en: "Liver" },
+                { id: "Sirosis (alkohol), hepatitis (jarum suntik), steatohepatitis, gagal hati akut.", en: "Cirrhosis (alcohol), hepatitis (needle use), steatohepatitis, acute liver failure." },
+              ],
+              [
+                { id: "Ginjal", en: "Kidneys" },
+                { id: "Nefropati, gagal ginjal akut (rhabdomiolisis akibat stimulan), infeksi.", en: "Nephropathy, acute kidney failure (rhabdomyolysis from stimulants), infection." },
+              ],
+              [
+                { id: "Reproduksi", en: "Reproductive system" },
+                { id: "Disfungsi seksual, ketidakseimbangan hormon, risiko janin cacat (teratogen).", en: "Sexual dysfunction, hormonal imbalance, risk of birth defects (teratogenic)." },
+              ],
+            ],
+          },
+        },
+        {
+          id: "timeline",
+          label: { id: "Timeline Kerusakan", en: "Damage Timeline" },
+          body: {
+            id: "Kerusakan yang muncul dalam hitungan jam bisa fatal seketika, sedangkan kerusakan yang terbentuk selama bertahun-tahun cenderung permanen dan sulit dipulihkan.",
+            en: "Damage that appears within hours can be instantly fatal, while damage built up over years tends to be permanent and hard to reverse.",
+          },
+          table: {
+            headers: [
+              { id: "Rentang Waktu", en: "Time Range" },
+              { id: "Perubahan Patologis", en: "Pathological Change" },
+              { id: "Reversibilitas", en: "Reversibility" },
+            ],
+            rows: [
+              [
+                { id: "Jam–hari (akut)", en: "Hours–days (acute)" },
+                { id: "Intoksikasi, overdosis, aritmia akut.", en: "Intoxication, overdose, acute arrhythmia." },
+                { id: "Berpotensi fatal", en: "Potentially fatal" },
+              ],
+              [
+                { id: "Minggu–bulan", en: "Weeks–months" },
+                { id: "Toleransi, withdrawal fisik, penurunan kognitif awal.", en: "Tolerance, physical withdrawal, early cognitive decline." },
+                { id: "Sebagian reversibel", en: "Partially reversible" },
+              ],
+              [
+                { id: "Bulan–tahun", en: "Months–years" },
+                { id: "Atrofi otak, sirosis, kardiomiopati, psikosis.", en: "Brain atrophy, cirrhosis, cardiomyopathy, psychosis." },
+                { id: "Sulit/tidak reversibel", en: "Difficult/not reversible" },
+              ],
+              [
+                { id: "Paparan janin", en: "Fetal exposure" },
+                { id: "Sindrom bayi baru lahir (NAS), cacat lahir.", en: "Neonatal abstinence syndrome (NAS), birth defects." },
+                { id: "Dampak seumur hidup", en: "Lifelong impact" },
+              ],
+            ],
+          },
+        },
+      ],
     },
     {
       key: "visual",
@@ -1160,8 +1400,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Visualization",
       },
       body: {
-        id: "Visualisasi organ interaktif membandingkan kondisi sehat dan tidak sehat pada otak, jantung, paru, dan hati, lalu menempatkannya dalam mode timeline dari dampak awal sampai dampak menahun.",
-        en: "The interactive organ visualization compares healthy and unhealthy conditions in the brain, heart, lungs, and liver, then places them on a timeline from early effects to long-term damage.",
+        id: "Struktur 3D morfin berikut adalah contoh opioid yang menembus plasenta dan dapat menyebabkan sindrom adiksi neonatal (NAS) pada bayi yang lahir dari ibu pengguna.",
+        en: "The 3D morphine structure below is an example of an opioid that crosses the placenta and can cause neonatal abstinence syndrome (NAS) in babies born to users.",
       },
     },
     {
@@ -1171,9 +1411,19 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Islamic Values Panel",
       },
       body: {
-        id: "Tubuh adalah amanah yang harus dijaga. Mengetahui dampak zat pada organ menumbuhkan kesadaran bahwa keputusan konsumsi yang salah dapat melukai diri sendiri dalam jangka panjang.",
-        en: "The body is a trust that must be protected. Knowing the effects of substances on organs builds awareness that poor consumption decisions can harm oneself in the long run.",
+        id: "Tubuh adalah amanah yang harus dijaga. Kerusakan organ yang tidak dapat dipulihkan — terutama otak dan hati — adalah bentuk membunuh diri sendiri secara perlahan yang dilarang dalam ayat berikut.",
+        en: "The body is a trust that must be protected. Irreversible organ damage — especially to the brain and liver — is a form of slowly killing oneself, which the verse below prohibits.",
       },
+      quotes: [
+        {
+          arabic: "وَلَا تَقْتُلُوا أَنفُسَكُمْ ۚ إِنَّ اللَّهَ كَانَ بِكُمْ رَحِيمًا",
+          translation: {
+            id: "Dan janganlah kamu membunuh dirimu sendiri. Sungguh, Allah Maha Penyayang kepadamu.",
+            en: "And do not kill yourselves. Indeed, God is ever merciful to you.",
+          },
+          source: "QS. An-Nisā' [4]: 29",
+        },
+      ],
     },
     {
       key: "halal",
@@ -1182,8 +1432,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Halal Literacy Panel",
       },
       body: {
-        id: "Konsep halal-tayyib menuntun siswa menilai keamanan produk dari dampaknya pada tubuh. Jika suatu zat berpotensi merusak organ, maka aspek mudarat harus menjadi pertimbangan utama.",
-        en: "The halal-tayyib concept guides students to assess product safety through its effects on the body. If a substance can damage organs, then the aspect of harm must become a primary consideration.",
+        id: "Konsep halal-tayyib menuntun siswa menilai keamanan produk dari dampaknya pada tubuh. Jika suatu zat berpotensi merusak organ secara permanen, maka aspek mudarat harus menjadi pertimbangan utama, bukan hanya legalitasnya.",
+        en: "The halal-tayyib concept guides students to assess product safety through its effects on the body. If a substance can permanently damage organs, the aspect of harm must be the primary consideration, not just its legality.",
       },
     },
     {
@@ -1208,7 +1458,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
       ],
       questions: [
         {
-          id: "m5q1",
+          id: "m3q1",
           prompt: {
             id: "Dampak zat adiktif pada paru-paru terutama berupa...",
             en: "The primary impact of addictive substances on the lungs is...",
@@ -1222,7 +1472,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           correct: "b",
         },
         {
-          id: "m5q2",
+          id: "m3q2",
           prompt: {
             id: "Hati bekerja lebih keras saat zat adiktif masuk ke tubuh karena...",
             en: "The liver works harder when addictive substances enter the body because it...",
@@ -1236,7 +1486,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           correct: "b",
         },
         {
-          id: "m5q3",
+          id: "m3q3",
           prompt: {
             id: "Perbedaan efek jangka pendek dan jangka panjang zat adiktif adalah...",
             en: "The difference between short-term and long-term effects of addictive substances is...",
@@ -1252,7 +1502,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
       ],
     },
   ],
-  M6: [
+  M4: [
     {
       key: "stimulus",
       title: {
@@ -1260,8 +1510,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Stimulus",
       },
       body: {
-        id: "Banyak produk beredar dengan label yang menarik, tetapi tidak semua konsumen memahami arti komposisi, red flags, atau potensi risiko di baliknya. Keputusan aman memerlukan kemampuan membaca informasi dengan teliti.",
-        en: "Many products circulate with attractive labels, but not all consumers understand the meaning of ingredients, red flags, or potential risks behind them. Safe decisions require the ability to read information carefully.",
+        id: "Banyak produk beredar dengan label yang menarik, tetapi tidak semua konsumen memahami arti komposisi, red flags, atau potensi risiko di baliknya. Literasi halal adalah kemampuan membaca, memahami, dan mengevaluasi informasi tentang kehalalan dan keamanan produk, termasuk mengidentifikasi zat adiktif yang tersembunyi dalam produk sehari-hari.",
+        en: "Many products circulate with attractive labels, but not all consumers understand the meaning of ingredients, red flags, or potential risks behind them. Halal literacy is the ability to read, understand, and evaluate information about a product's halal status and safety, including identifying addictive substances hidden in everyday products.",
       },
     },
     {
@@ -1271,9 +1521,27 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Learning Goals + Halal Literacy Indicators",
       },
       body: {
-        id: "Kamu diharapkan mampu membaca label, mengenali tanda bahaya, dan mengambil keputusan konsumsi yang aman, bertanggung jawab, serta sesuai prinsip halal-tayyib.",
-        en: "You are expected to read labels, recognize warning signs, and make safe, responsible consumption decisions in line with halal-tayyib principles.",
+        id: "Kamu diharapkan mampu membaca label, mengenali red flags, memverifikasi kehalalan, dan mengambil keputusan konsumsi yang bijak, bertanggung jawab, serta sesuai prinsip halal-tayyib.",
+        en: "You are expected to read labels, recognize red flags, verify halal status, and make wise, responsible consumption decisions in line with halal-tayyib principles.",
       },
+      checkpoints: [
+        {
+          id: "Membaca label: memahami daftar bahan, nomor E-code, dan nama kimia tersembunyi pada kemasan produk.",
+          en: "Reading labels: understanding ingredient lists, E-codes, and hidden chemical names on product packaging.",
+        },
+        {
+          id: "Mengenali red flags: mengidentifikasi klaim berlebihan (\"langsung langsing\", \"tidak mengantuk 24 jam\") sebagai tanda kemungkinan zat terlarang.",
+          en: "Recognizing red flags: identifying exaggerated claims (\"instant slimming\", \"no drowsiness for 24 hours\") as signs of possible prohibited substances.",
+        },
+        {
+          id: "Verifikasi halal: memeriksa logo MUI, nomor registrasi BPOM, dan sumber bahan baku produk konsumsi.",
+          en: "Halal verification: checking the MUI logo, BPOM registration number, and raw material sources of a consumer product.",
+        },
+        {
+          id: "Konsumsi bijak: prinsip israf (berlebihan) berlaku pula untuk kafein dan zat legal — konsumsi wajar dan tidak berlebihan.",
+          en: "Wise consumption: the principle of israf (excess) also applies to caffeine and legal substances — consume reasonably and without excess.",
+        },
+      ],
     },
     {
       key: "material",
@@ -1282,9 +1550,97 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Core Chemistry Material",
       },
       body: {
-        id: "Literasi halal mencakup kemampuan membaca komposisi, memahami klaim produk, menilai kandungan aktif, dan mengenali red flags seperti peringatan kesehatan, kandungan berisiko, atau informasi yang tidak jelas. Konsumsi aman membutuhkan gabungan pengetahuan sains dan pertimbangan nilai.",
-        en: "Halal literacy includes the ability to read ingredients, understand product claims, assess active compounds, and recognize red flags such as health warnings, risky content, or unclear information. Safe consumption requires both scientific knowledge and value-based consideration.",
+        id: "Pelajari empat dimensi literasi halal serta contoh red flags nyata pada label produk melalui dua tab berikut.",
+        en: "Study the four dimensions of halal literacy and real examples of label red flags through the two tabs below.",
       },
+      tabs: [
+        {
+          id: "dimensi",
+          label: { id: "Dimensi Literasi Halal", en: "Halal Literacy Dimensions" },
+          body: {
+            id: "Literasi halal mencakup empat dimensi yang saling melengkapi, mulai dari membaca label hingga mengambil keputusan konsumsi yang bijak.",
+            en: "Halal literacy covers four complementary dimensions, from reading labels to making wise consumption decisions.",
+          },
+          table: {
+            headers: [
+              { id: "Dimensi", en: "Dimension" },
+              { id: "Penjelasan", en: "Explanation" },
+            ],
+            rows: [
+              [
+                { id: "Membaca label", en: "Reading labels" },
+                { id: "Memahami daftar bahan, nomor E-code, dan nama kimia tersembunyi pada kemasan produk.", en: "Understanding ingredient lists, E-codes, and hidden chemical names on product packaging." },
+              ],
+              [
+                { id: "Mengenali red flags", en: "Recognizing red flags" },
+                { id: "Identifikasi klaim berlebihan (\"langsung langsing\", \"tidak mengantuk 24 jam\") sebagai tanda kemungkinan zat terlarang.", en: "Identifying exaggerated claims (\"instant slimming\", \"no drowsiness for 24 hours\") as signs of possible prohibited substances." },
+              ],
+              [
+                { id: "Verifikasi halal", en: "Halal verification" },
+                { id: "Memeriksa logo MUI, nomor registrasi BPOM, dan sumber bahan baku produk konsumsi.", en: "Checking the MUI logo, BPOM registration number, and raw material sources of the product." },
+              ],
+              [
+                { id: "Konsumsi bijak", en: "Wise consumption" },
+                { id: "Prinsip israf (berlebihan) berlaku pula untuk kafein dan zat legal — konsumsi wajar dan tidak berlebihan.", en: "The principle of israf (excess) also applies to caffeine and legal substances — consume reasonably and without excess." },
+              ],
+            ],
+          },
+        },
+        {
+          id: "red-flags",
+          label: { id: "Red Flags Label", en: "Label Red Flags" },
+          body: {
+            id: "Sejumlah bahan sering muncul di label dengan nama yang terdengar aman atau \"herbal\", padahal secara ilmiah tergolong stimulan, depresan, atau berisiko tinggi.",
+            en: "Several ingredients often appear on labels under names that sound safe or \"herbal\", even though they are scientifically classified as stimulants, depressants, or high-risk substances.",
+          },
+          table: {
+            headers: [
+              { id: "Nama pada Label", en: "Label Name" },
+              { id: "Nama Ilmiah", en: "Scientific Name" },
+              { id: "Kategori", en: "Category" },
+              { id: "Risiko", en: "Risk" },
+            ],
+            rows: [
+              [
+                { id: "Efedra / Ma Huang", en: "Ephedra / Ma Huang" },
+                { id: "Efedrin C₁₀H₁₅NO", en: "Ephedrine C₁₀H₁₅NO" },
+                { id: "Stimulan", en: "Stimulant" },
+                { id: "Jantung, adiksi", en: "Heart risk, addiction" },
+              ],
+              [
+                { id: "Spirulina + \"energi instan\"", en: "Spirulina + \"instant energy\"" },
+                { id: "Adulterasi stimulan", en: "Adulterated stimulant" },
+                { id: "Campuran ilegal", en: "Illegal mixture" },
+                { id: "Haram / tidak halal", en: "Haram / not halal" },
+              ],
+              [
+                { id: "Kratom / Mitragyna", en: "Kratom / Mitragyna" },
+                { id: "Mitraginin C₂₃H₃₀N₂O₄", en: "Mitragynine C₂₃H₃₀N₂O₄" },
+                { id: "Menyerupai opioid", en: "Opioid-like" },
+                { id: "Adiksi, depresi napas", en: "Addiction, respiratory depression" },
+              ],
+              [
+                { id: "Kava-kava", en: "Kava-kava" },
+                { id: "Kavain C₁₄H₁₄O₃", en: "Kavain C₁₄H₁₄O₃" },
+                { id: "Depresan", en: "Depressant" },
+                { id: "Hepatotoksik", en: "Hepatotoxic" },
+              ],
+              [
+                { id: "Alcohol (flavoring)", en: "Alcohol (flavoring)" },
+                { id: "Etanol C₂H₅OH", en: "Ethanol C₂H₅OH" },
+                { id: "Depresan / Haram", en: "Depressant / Haram" },
+                { id: "Haram jika ≥0,5%", en: "Haram if ≥0.5%" },
+              ],
+              [
+                { id: "Propilen glikol", en: "Propylene glycol" },
+                { id: "C₃H₈O₂", en: "C₃H₈O₂" },
+                { id: "Pelarut (e-liquid)", en: "Solvent (e-liquid)" },
+                { id: "Risiko inhalasi", en: "Inhalation risk" },
+              ],
+            ],
+          },
+        },
+      ],
     },
     {
       key: "visual",
@@ -1293,8 +1649,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Visualization",
       },
       body: {
-        id: "Visualisasi menampilkan contoh label produk dengan bagian yang harus diperhatikan: komposisi, izin edar, peringatan, petunjuk penggunaan, dan informasi kandungan yang mungkin memengaruhi kesehatan.",
-        en: "The visualization displays a sample product label with sections that should be reviewed: ingredients, registration, warnings, usage instructions, and content information that may affect health.",
+        id: "Struktur 3D etanol berikut adalah salah satu red flag paling umum: sering muncul di label sebagai \"alcohol (flavoring)\" dan tetap berstatus haram meski kadarnya kecil.",
+        en: "The 3D ethanol structure below is one of the most common red flags: it often appears on labels as \"alcohol (flavoring)\" and remains haram even in small amounts.",
       },
     },
     {
@@ -1304,9 +1660,19 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Islamic Values Panel",
       },
       body: {
-        id: "Sikap hati-hati dalam memilih produk merupakan bentuk tanggung jawab terhadap diri sendiri. Nilai Islam mendorong manusia memilih yang halal, baik, aman, dan menjauhi hal yang meragukan atau berbahaya.",
-        en: "Being careful in choosing products is a form of responsibility toward oneself. Islamic values encourage people to choose what is halal, good, safe, and to avoid what is doubtful or harmful.",
+        id: "Sikap hati-hati dalam memilih produk merupakan bentuk tanggung jawab terhadap diri sendiri. Nilai Islam mendorong manusia memilih yang tayyib (baik) dan menjauhi yang khabā'ith (buruk), sebagaimana disebutkan dalam ayat berikut.",
+        en: "Being careful in choosing products is a form of responsibility toward oneself. Islamic values encourage people to choose what is tayyib (good) and avoid what is khabā'ith (bad), as stated in the verse below.",
       },
+      quotes: [
+        {
+          arabic: "وَيُحِلُّ لَهُمُ الطَّيِّبَاتِ وَيُحَرِّمُ عَلَيْهِمُ الْخَبَائِثَ",
+          translation: {
+            id: "Dan (Nabi) menghalalkan bagi mereka segala yang baik (ṭayyibāt) dan mengharamkan bagi mereka segala yang buruk (khabā'ith).",
+            en: "And he (the Prophet) makes lawful for them all that is good (ṭayyibāt) and prohibits for them all that is bad (khabā'ith).",
+          },
+          source: "QS. Al-A'rāf [7]: 157",
+        },
+      ],
     },
     {
       key: "halal",
@@ -1315,21 +1681,45 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Halal Literacy Panel",
       },
       body: {
-        id: "Panel ini menekankan konsep halal-tayyib, maslahah-mudarat, dan kebiasaan cek label sebelum membeli. Siswa dilatih agar tidak mudah percaya pada promosi tanpa membaca informasi penting lebih dahulu.",
-        en: "This panel emphasizes halal-tayyib, benefit-versus-harm, and the habit of checking labels before buying. Students are trained not to trust promotions easily without first reading important information.",
+        id: "Empat kaidah fikih berikut menjadi dasar menilai kehalalan dan keamanan produk konsumsi sehari-hari.",
+        en: "The four fiqh principles below form the basis for assessing the halal status and safety of everyday consumer products.",
+      },
+      table: {
+        headers: [
+          { id: "Kaidah", en: "Principle" },
+          { id: "Penjelasan", en: "Explanation" },
+        ],
+        rows: [
+          [
+            { id: "Al-aṣlu fī al-asyyā' al-ibāḥah", en: "Al-aṣlu fī al-asyyā' al-ibāḥah" },
+            { id: "Hukum asal segala sesuatu adalah mubah, sampai ada dalil yang mengharamkan.", en: "The default ruling for anything is permissible, until there is evidence that forbids it." },
+          ],
+          [
+            { id: "Mā uskira kathīruhu fa qalīluhu ḥarām", en: "Mā uskira kathīruhu fa qalīluhu ḥarām" },
+            { id: "Sesuatu yang memabukkan dalam jumlah banyak, maka sedikitnya pun haram.", en: "Whatever intoxicates in large amounts, its small amount is also forbidden." },
+          ],
+          [
+            { id: "Ad-ḍarūrāt tubīḥu al-maḥẓūrāt", en: "Ad-ḍarūrāt tubīḥu al-maḥẓūrāt" },
+            { id: "Darurat (medis) membolehkan yang terlarang, dengan syarat: tidak ada alternatif halal, dosis minimal, rekomendasi dokter.", en: "Necessity (medical) permits the prohibited, on condition that there is no halal alternative, the dose is minimal, and a doctor recommends it." },
+          ],
+          [
+            { id: "Sadd adz-Dzarī'ah", en: "Sadd adz-Dzarī'ah" },
+            { id: "Menutup jalan menuju keharaman: menjauhi lingkungan dan situasi yang mendekatkan kepada zat terlarang.", en: "Blocking the path to sin: avoiding environments and situations that lead toward prohibited substances." },
+          ],
+        ],
       },
       checkpoints: [
         {
-          id: "Periksa komposisi produk.",
-          en: "Check the product ingredients.",
+          id: "Diri: taqwa sebagai benteng pertama — dzikir dan shalat malam terbukti mengurangi aktivasi amigdala (stres kronis = pemicu relaps).",
+          en: "Self: taqwa as the first line of defense — remembrance and night prayer have been shown to reduce amygdala activation (chronic stress = relapse trigger).",
         },
         {
-          id: "Cari peringatan atau red flags.",
-          en: "Look for warnings or red flags.",
+          id: "Keluarga: melatih komunikasi asertif untuk menolak tawaran dengan tegas, hormat, dan tanpa merasa bersalah.",
+          en: "Family: practicing assertive communication to firmly and respectfully decline offers without feeling guilty.",
         },
         {
-          id: "Nilai manfaat dan mudarat sebelum membeli.",
-          en: "Assess benefits and harms before buying.",
+          id: "Masyarakat: berperan aktif melaporkan peredaran narkoba dan mendukung program rehabilitasi berbasis komunitas.",
+          en: "Community: actively participating in reporting drug circulation and supporting community-based rehabilitation programs.",
         },
       ],
     },
@@ -1355,7 +1745,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
       ],
       questions: [
         {
-          id: "m6q1",
+          id: "m4q1",
           prompt: {
             id: "Red flag pada label produk yang harus diwaspadai adalah...",
             en: "Red flags on a product label to watch out for include...",
@@ -1369,7 +1759,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           correct: "c",
         },
         {
-          id: "m6q2",
+          id: "m4q2",
           prompt: {
             id: "Prinsip halal-tayyib dalam memilih produk berarti...",
             en: "The halal-tayyib principle in choosing products means...",
@@ -1383,7 +1773,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           correct: "c",
         },
         {
-          id: "m6q3",
+          id: "m4q3",
           prompt: {
             id: "Informasi pertama yang penting diperiksa pada label produk adalah...",
             en: "The first important information to check on a product label is...",
@@ -1399,7 +1789,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
       ],
     },
   ],
-  M7: [
+  M5: [
     {
       key: "stimulus",
       title: {
@@ -1488,7 +1878,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
       ],
       questions: [
         {
-          id: "m7q1",
+          id: "m5q1",
           prompt: {
             id: "Ketika diajak mencoba zat terlarang, respons paling tepat adalah...",
             en: "When invited to try a prohibited substance, the most appropriate response is to...",
@@ -1502,7 +1892,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           correct: "c",
         },
         {
-          id: "m7q2",
+          id: "m5q2",
           prompt: {
             id: "Asertif dalam konteks menolak ajakan berarti...",
             en: "Being assertive when refusing an invitation means...",
@@ -1516,7 +1906,7 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
           correct: "c",
         },
         {
-          id: "m7q3",
+          id: "m5q3",
           prompt: {
             id: "Dasar ilmiah untuk menolak ajakan mencoba zat adiktif mencakup pengetahuan tentang...",
             en: "The scientific basis for refusing an invitation to try addictive substances includes knowledge of...",
@@ -1545,8 +1935,6 @@ export function getDefaultModuleProgress(): ModuleProgressMap {
     M3: 0,
     M4: 0,
     M5: 0,
-    M6: 0,
-    M7: 0,
   };
 }
 

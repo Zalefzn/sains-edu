@@ -155,7 +155,7 @@ export default function ExplorePage() {
             home: "Home",
             title: "Peta Modul / Menu Utama",
             desc:
-              "Tampilan peta modul mengikuti storyboard: kartu M1-M7 dalam grid, progress bar kecil, dan pintasan ke kuis serta referensi.",
+              "Tampilan peta modul mengikuti storyboard: kartu M1-M5 dalam grid, progress bar kecil, dan pintasan ke kuis serta referensi.",
             back: "Kembali",
             routeRecommended: "Jalur rekomendasi",
             routeFree: "Eksplor bebas",
@@ -180,7 +180,7 @@ export default function ExplorePage() {
             shortcutReference: "Referensi",
             shortcutGlossary: "Glosarium",
             priorityTitle: "Prioritas modul",
-            mapTitle: "Kartu Modul M1-M7",
+            mapTitle: "Kartu Modul M1-M5",
             mapDesc:
               "Halaman utama hanya menampilkan dashboard modul. Klik kartu modul untuk masuk ke pembelajaran.",
             openModule: "Buka Modul",
@@ -206,7 +206,7 @@ export default function ExplorePage() {
             home: "Home",
             title: "Module Map / Main Menu",
             desc:
-              "The module map follows the storyboard: M1-M7 cards in a grid, small progress bars, and shortcuts to quiz and references.",
+              "The module map follows the storyboard: M1-M5 cards in a grid, small progress bars, and shortcuts to quiz and references.",
             back: "Back",
             routeRecommended: "Recommended route",
             routeFree: "Free exploration",
@@ -231,7 +231,7 @@ export default function ExplorePage() {
             shortcutReference: "References",
             shortcutGlossary: "Glossary",
             priorityTitle: "Priority modules",
-            mapTitle: "M1-M7 Module Cards",
+            mapTitle: "M1-M5 Module Cards",
             mapDesc:
               "The main page only shows the module dashboard. Click a module card to enter learning.",
             openModule: "Open Module",

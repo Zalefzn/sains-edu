@@ -9,8 +9,10 @@ import {
   modules,
   pick,
   sanitizeModuleProgress,
+  type DopamineChart,
   type Locale,
   type ModuleCode,
+  type MoleculeItem,
   type ModuleQuote,
   type ModuleTab,
   type ModuleTable,
@@ -105,6 +107,89 @@ function ModuleTabsBlock({
 
       {active.quote ? <ModuleQuoteView quote={active.quote} locale={locale} /> : null}
       {active.table ? <ModuleTableView table={active.table} locale={locale} /> : null}
+    </div>
+  );
+}
+
+function DopamineChartView({ chart, locale }: { chart: DopamineChart; locale: Locale }) {
+  const [activeKey, setActiveKey] = useState(chart.items[0]?.key);
+  const active = chart.items.find((item) => item.key === activeKey) ?? chart.items[0];
+
+  return (
+    <div className="mt-5 rounded-3xl border border-zinc-200/70 bg-white p-6">
+      <p className="text-sm font-semibold text-zinc-900">{pick(locale, chart.title)}</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {chart.items.map((item) => {
+          const isActive = item.key === active.key;
+          return (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => setActiveKey(item.key)}
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                isActive
+                  ? "border-transparent text-white"
+                  : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+              }`}
+              style={isActive ? { backgroundColor: "var(--brand)" } : undefined}
+            >
+              {pick(locale, item.label)}
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-4 h-8 w-full overflow-hidden rounded-full bg-zinc-100">
+        <div
+          className="flex h-full items-center rounded-full pl-3 text-xs font-semibold text-white transition-all duration-500"
+          style={{ width: `${active.widthPercent}%`, backgroundColor: active.color }}
+        >
+          {pick(locale, active.resultLabel)}
+        </div>
+      </div>
+      <p className="mt-4 text-sm leading-7 text-zinc-700">{pick(locale, active.description)}</p>
+    </div>
+  );
+}
+
+function MoleculeSelectorView({ molecules, locale }: { molecules: MoleculeItem[]; locale: Locale }) {
+  const [activeKey, setActiveKey] = useState(molecules[0]?.key);
+  const active = molecules.find((item) => item.key === activeKey) ?? molecules[0];
+
+  return (
+    <div className="mt-5">
+      <div className="flex flex-wrap gap-2">
+        {molecules.map((item) => {
+          const isActive = item.key === active.key;
+          return (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => setActiveKey(item.key)}
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                isActive
+                  ? "border-transparent text-white"
+                  : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+              }`}
+              style={isActive ? { backgroundColor: "var(--brand)" } : undefined}
+            >
+              {pick(locale, item.label)}
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-4 rounded-3xl bg-zinc-50 p-5">
+        <p className="text-sm font-semibold text-zinc-900">{pick(locale, active.label)}</p>
+        <p className="mt-2 text-sm leading-7 text-zinc-700">{pick(locale, active.description)}</p>
+      </div>
+      <div className="mt-5 overflow-hidden rounded-3xl border border-zinc-200/70">
+        <iframe
+          key={active.key}
+          src={`https://pubchem.ncbi.nlm.nih.gov/compound/${active.pubchemCid}#section=3D-Conformer&embed=true`}
+          className="h-[85vh] min-h-[720px] w-full border-0"
+          title={`3D structure – ${pick(locale, active.label)}`}
+          loading="lazy"
+        />
+      </div>
     </div>
   );
 }
@@ -640,7 +725,7 @@ export default function ModuleDetailPage() {
                       </div>
                     </div>
 
-                    {step.key === "visual" && currentModule.pubchemCid ? (
+                    {step.key === "visual" && (step.dopamineChart || (step.molecules?.length ?? 0) > 0) ? (
                       <>
                         <div className="mt-5 rounded-3xl bg-zinc-50 p-6">
                           <p className="text-sm font-semibold text-zinc-900">
@@ -650,14 +735,12 @@ export default function ModuleDetailPage() {
                             {pick(locale, step.body)}
                           </p>
                         </div>
-                        <div className="mt-5 overflow-hidden rounded-3xl border border-zinc-200/70">
-                          <iframe
-                            src={`https://pubchem.ncbi.nlm.nih.gov/compound/${currentModule.pubchemCid}#section=3D-Conformer&embed=true`}
-                            className="h-[85vh] min-h-[720px] w-full border-0"
-                            title={`3D structure – ${pick(locale, currentModule.title)}`}
-                            loading="lazy"
-                          />
-                        </div>
+                        {step.dopamineChart ? (
+                          <DopamineChartView chart={step.dopamineChart} locale={locale} />
+                        ) : null}
+                        {step.molecules?.length ? (
+                          <MoleculeSelectorView molecules={step.molecules} locale={locale} />
+                        ) : null}
                       </>
                     ) : step.tabs && step.tabs.length > 0 ? (
                       <ModuleTabsBlock

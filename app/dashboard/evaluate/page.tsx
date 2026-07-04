@@ -47,7 +47,7 @@ const questions: Question[] = [
     correct: "b",
   },
   {
-    id: "eq3", domain: "pengetahuan", module: "M2",
+    id: "eq3", domain: "pengetahuan", module: "M1",
     prompt: {
       id: "Kafein dan nikotin termasuk golongan zat...",
       en: "Caffeine and nicotine both belong to the class of...",
@@ -61,7 +61,7 @@ const questions: Question[] = [
     correct: "c",
   },
   {
-    id: "eq4", domain: "pengetahuan", module: "M2",
+    id: "eq4", domain: "pengetahuan", module: "M1",
     prompt: {
       id: "Seseorang dianggap mengalami adiksi jika...",
       en: "A person is considered addicted if they...",
@@ -75,7 +75,7 @@ const questions: Question[] = [
     correct: "b",
   },
   {
-    id: "eq5", domain: "pengetahuan", module: "M3",
+    id: "eq5", domain: "pengetahuan", module: "M1",
     prompt: {
       id: "Urutan proses farmakokinetik yang benar adalah...",
       en: "The correct order of pharmacokinetic processes is...",
@@ -89,7 +89,7 @@ const questions: Question[] = [
     correct: "b",
   },
   {
-    id: "eq6", domain: "pengetahuan", module: "M3",
+    id: "eq6", domain: "pengetahuan", module: "M1",
     prompt: {
       id: "Hati berperan kritis dalam farmakokinetik karena...",
       en: "The liver plays a critical role in pharmacokinetics because it...",
@@ -103,7 +103,7 @@ const questions: Question[] = [
     correct: "c",
   },
   {
-    id: "eq7", domain: "keterampilan", module: "M4",
+    id: "eq7", domain: "keterampilan", module: "M2",
     prompt: {
       id: "Penggunaan zat adiktif berulang kali menyebabkan toleransi karena...",
       en: "Repeated use of addictive substances causes tolerance because...",
@@ -117,7 +117,7 @@ const questions: Question[] = [
     correct: "b",
   },
   {
-    id: "eq8", domain: "keterampilan", module: "M4",
+    id: "eq8", domain: "keterampilan", module: "M2",
     prompt: {
       id: "Gejala withdrawal (putus zat) muncul karena...",
       en: "Withdrawal symptoms occur because...",
@@ -131,7 +131,7 @@ const questions: Question[] = [
     correct: "b",
   },
   {
-    id: "eq9", domain: "keterampilan", module: "M5",
+    id: "eq9", domain: "keterampilan", module: "M3",
     prompt: {
       id: "Paru-paru sangat rentan terhadap dampak zat yang dihirup karena...",
       en: "Lungs are particularly vulnerable to inhaled substances because...",
@@ -145,7 +145,7 @@ const questions: Question[] = [
     correct: "c",
   },
   {
-    id: "eq10", domain: "keterampilan", module: "M5",
+    id: "eq10", domain: "keterampilan", module: "M3",
     prompt: {
       id: "Perbedaan antara efek jangka pendek dan jangka panjang zat adiktif pada organ adalah...",
       en: "The difference between short-term and long-term effects of addictive substances on organs is...",
@@ -159,7 +159,7 @@ const questions: Question[] = [
     correct: "a",
   },
   {
-    id: "eq11", domain: "keterampilan", module: "M6",
+    id: "eq11", domain: "keterampilan", module: "M4",
     prompt: {
       id: "Saat membaca label produk, yang paling penting diperiksa pertama kali adalah...",
       en: "When reading a product label, the most important thing to check first is...",
@@ -173,7 +173,7 @@ const questions: Question[] = [
     correct: "b",
   },
   {
-    id: "eq12", domain: "keterampilan", module: "M6",
+    id: "eq12", domain: "keterampilan", module: "M4",
     prompt: {
       id: "Prinsip halal-tayyib membantu keputusan konsumsi dengan cara...",
       en: "The halal-tayyib principle aids consumption decisions by...",
@@ -187,7 +187,7 @@ const questions: Question[] = [
     correct: "c",
   },
   {
-    id: "eq13", domain: "sikap", module: "M7",
+    id: "eq13", domain: "sikap", module: "M5",
     prompt: {
       id: "Strategi menolak ajakan penggunaan zat yang paling efektif dan asertif adalah...",
       en: "The most effective and assertive strategy for refusing substance use invitations is...",
@@ -201,7 +201,7 @@ const questions: Question[] = [
     correct: "b",
   },
   {
-    id: "eq14", domain: "sikap", module: "M7",
+    id: "eq14", domain: "sikap", module: "M5",
     prompt: {
       id: "Penolakan berbasis ilmu berarti menolak ajakan karena...",
       en: "Science-based refusal means declining an invitation because you...",
@@ -232,13 +232,11 @@ function getDomainScore(answers: AnswerMap, domain: Domain): { correct: number; 
 }
 
 const weakModules: Record<string, { id: string; en: string }> = {
-  M1: { id: "M1 — Zat Adiktif & Psikotropika", en: "M1 — Addictive Substances & Psychotropics" },
-  M2: { id: "M2 — Klasifikasi & Adiksi", en: "M2 — Classification & Addiction" },
-  M3: { id: "M3 — Farmakokinetik", en: "M3 — Pharmacokinetics" },
-  M4: { id: "M4 — Sistem Reward Otak", en: "M4 — Brain Reward System" },
-  M5: { id: "M5 — Dampak pada Organ", en: "M5 — Impact on Organs" },
-  M6: { id: "M6 — Literasi Halal", en: "M6 — Halal Literacy" },
-  M7: { id: "M7 — Studi Kasus & Strategi", en: "M7 — Case Studies & Strategies" },
+  M1: { id: "M1 — Zat Adiktif, Psikotropika, Klasifikasi & Farmakokinetik", en: "M1 — Addictive Substances, Psychotropics, Classification & Pharmacokinetics" },
+  M2: { id: "M2 — Sistem Reward Otak", en: "M2 — Brain Reward System" },
+  M3: { id: "M3 — Dampak pada Organ", en: "M3 — Impact on Organs" },
+  M4: { id: "M4 — Literasi Halal", en: "M4 — Halal Literacy" },
+  M5: { id: "M5 — Studi Kasus & Strategi", en: "M5 — Case Studies & Strategies" },
 };
 
 export default function EvaluatePage() {
@@ -280,11 +278,11 @@ export default function EvaluatePage() {
       title: locale === "id" ? "Evaluasi Sumatif" : "Summative Evaluation",
       subtitle: locale === "id" ? "Kuis & Evaluasi" : "Quiz & Evaluation",
       introDesc: locale === "id"
-        ? "Uji pemahaman kamu tentang seluruh materi modul M1–M7. Evaluasi ini mencakup tiga domain kompetensi: Pengetahuan, Keterampilan, dan Sikap."
-        : "Test your understanding of all module content M1–M7. This evaluation covers three competency domains: Knowledge, Skills, and Values.",
+        ? "Uji pemahaman kamu tentang seluruh materi modul M1–M5. Evaluasi ini mencakup tiga domain kompetensi: Pengetahuan, Keterampilan, dan Sikap."
+        : "Test your understanding of all module content M1–M5. This evaluation covers three competency domains: Knowledge, Skills, and Values.",
       stats: locale === "id"
-        ? ["14 soal pilihan ganda", "Mencakup M1–M7", "3 domain kompetensi"]
-        : ["14 multiple-choice questions", "Covers M1–M7", "3 competency domains"],
+        ? ["14 soal pilihan ganda", "Mencakup M1–M5", "3 domain kompetensi"]
+        : ["14 multiple-choice questions", "Covers M1–M5", "3 competency domains"],
       start: locale === "id" ? "Mulai Evaluasi" : "Start Evaluation",
       question: locale === "id" ? "Soal" : "Question",
       of: locale === "id" ? "dari" : "of",

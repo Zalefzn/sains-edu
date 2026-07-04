@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { priorityByLevel } from "../module-data";
 
 type Locale = "id" | "en";
 type Level = "dasar" | "sedang" | "lanjut";
@@ -214,12 +215,6 @@ const questions: Question[] = [
     correct: "b",
   },
 ];
-
-const priorityByLevel: Record<Level, string[]> = {
-  dasar: ["M1", "M2", "M5", "M6"],
-  sedang: ["M2", "M3", "M4", "M5", "M6"],
-  lanjut: ["M3", "M4", "M6", "M7"],
-};
 
 function getInitialLocale(): Locale {
   if (typeof window === "undefined") return "id";
