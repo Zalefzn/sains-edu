@@ -951,8 +951,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Stimulus",
       },
       body: {
-        id: "Sebagian zat membuat seseorang merasa senang sesaat, lalu ingin mengulanginya lagi. Lama-kelamaan muncul craving, kebutuhan dosis lebih besar, dan rasa tidak nyaman ketika penggunaan dihentikan.",
-        en: "Some substances make a person feel pleasure for a moment and then want to repeat it again. Over time craving appears, larger doses are needed, and discomfort emerges when use is stopped.",
+        id: "Sebagian zat membuat seseorang merasa senang sesaat, lalu ingin mengulanginya lagi. Lama-kelamaan muncul craving, kebutuhan dosis lebih besar, dan rasa tidak nyaman ketika penggunaan dihentikan. Apa yang sebenarnya terjadi pada \"jalur kesenangan\" di otak saat ini berulang kali dibajak oleh suatu zat?",
+        en: "Some substances make a person feel pleasure for a moment and then want to repeat it again. Over time craving appears, larger doses are needed, and discomfort emerges when use is stopped. What actually happens to the brain's \"pleasure pathway\" when it is repeatedly hijacked by a substance?",
       },
     },
     {
@@ -962,8 +962,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Learning Goals + Halal Literacy Indicators",
       },
       body: {
-        id: "Kamu diharapkan memahami konsep dopamin, craving, tolerance, dan withdrawal untuk menjelaskan mengapa perilaku adiktif sulit dihentikan.",
-        en: "You are expected to understand dopamine, craving, tolerance, and withdrawal to explain why addictive behavior is difficult to stop.",
+        id: "Kamu diharapkan memahami jalur mesolimbik (VTA → nukleus accumbens) dan konsep dopamin, craving, tolerance, dan withdrawal untuk menjelaskan mengapa perilaku adiktif sulit dihentikan.",
+        en: "You are expected to understand the mesolimbic pathway (VTA → nucleus accumbens) and the concepts of dopamine, craving, tolerance, and withdrawal to explain why addictive behavior is difficult to stop.",
       },
     },
     {
@@ -973,8 +973,41 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Core Chemistry Material",
       },
       body: {
-        id: "Sistem reward otak melibatkan pelepasan dopamin yang memberi sensasi senang. Jika paparan berulang terjadi, otak menyesuaikan responsnya sehingga muncul tolerance. Craving mendorong keinginan kuat untuk memakai lagi, sedangkan withdrawal muncul ketika pemakaian dihentikan dan tubuh bereaksi negatif.",
-        en: "The brain reward system involves dopamine release that creates a feeling of pleasure. With repeated exposure, the brain adjusts its response and tolerance appears. Craving drives a strong urge to use again, while withdrawal appears when use stops and the body reacts negatively.",
+        id: "Sistem reward otak melibatkan jalur dopaminergik dari area tegmental ventral (VTA) menuju nukleus accumbens (NAc). Secara normal, jalur ini memotivasi perilaku bertahan hidup seperti makan dan reproduksi. Zat adiktif \"membajak\" sistem ini dengan menginduksi lonjakan dopamin jauh melebihi rangsangan alami. Adiksi bukan sekadar pilihan moral, melainkan gangguan neurobiologis yang mengubah struktur dan fungsi otak melalui tiga fase siklus berikut.",
+        en: "The brain's reward system involves a dopaminergic pathway from the ventral tegmental area (VTA) to the nucleus accumbens (NAc). Normally, this pathway motivates survival behaviors such as eating and reproduction. Addictive substances \"hijack\" this system by inducing dopamine surges far beyond natural stimuli. Addiction is not merely a moral choice, but a neurobiological disorder that alters the brain's structure and function through the three-phase cycle below.",
+      },
+      table: {
+        headers: [
+          { id: "Fase", en: "Phase" },
+          { id: "Nama", en: "Name" },
+          { id: "Penjelasan", en: "Explanation" },
+        ],
+        rows: [
+          [
+            { id: "Fase 1", en: "Phase 1" },
+            { id: "Intoksikasi / Binge", en: "Intoxication / Binge" },
+            {
+              id: "Aktivasi sistem reward berlebihan → euforia. Korteks prefrontal (kendali diri) ditekan.",
+              en: "Excessive reward system activation → euphoria. The prefrontal cortex (self-control) is suppressed.",
+            },
+          ],
+          [
+            { id: "Fase 2", en: "Phase 2" },
+            { id: "Withdrawal / Afek Negatif", en: "Withdrawal / Negative Affect" },
+            {
+              id: "Kadar dopamin turun drastis di bawah normal → disforia, kecemasan, depresi, insomnia.",
+              en: "Dopamine levels drop drastically below normal → dysphoria, anxiety, depression, insomnia.",
+            },
+          ],
+          [
+            { id: "Fase 3", en: "Phase 3" },
+            { id: "Preokupasi / Antisipasi", en: "Preoccupation / Anticipation" },
+            {
+              id: "Craving kuat, dikendalikan amigdala & korteks prefrontal yang rusak → relaps.",
+              en: "Strong craving, driven by the amygdala and a damaged prefrontal cortex → relapse.",
+            },
+          ],
+        ],
       },
     },
     {
@@ -984,8 +1017,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Visualization",
       },
       body: {
-        id: "Visualisasi menampilkan perubahan level dopamin sebelum, saat, dan setelah penggunaan zat, sehingga siswa melihat hubungan antara sensasi sesaat, craving, dan penurunan kontrol diri.",
-        en: "The visualization displays dopamine level changes before, during, and after substance use, so students can see the connection between short-term pleasure, craving, and reduced self-control.",
+        id: "Struktur 3D dopamin berikut adalah neurotransmiter utama pada jalur mesolimbik (VTA → nukleus accumbens) yang bertanggung jawab atas sensasi senang. Bayangkan jalur ini sebagai animasi: pada penggunaan zat, lonjakan dopamin jauh melampaui rangsangan alami seperti makan atau berolahraga.",
+        en: "The 3D dopamine structure below is the key neurotransmitter in the mesolimbic pathway (VTA → nucleus accumbens) responsible for pleasurable sensation. Picture this pathway as an animation: with substance use, the dopamine surge far exceeds natural stimuli like eating or exercise.",
       },
     },
     {
@@ -995,9 +1028,19 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Islamic Values Panel",
       },
       body: {
-        id: "Pemahaman tentang sistem reward otak mengingatkan bahwa kenikmatan sesaat tidak selalu membawa kebaikan. Menjaga akal berarti juga menahan diri dari sesuatu yang perlahan merusak kendali dan kebebasan memilih.",
-        en: "Understanding the brain reward system reminds us that short-term pleasure does not always bring goodness. Protecting the mind also means restraining oneself from things that slowly damage control and freedom of choice.",
+        id: "Pemahaman tentang sistem reward otak mengingatkan bahwa kenikmatan sesaat tidak selalu membawa kebaikan. Menjaga akal berarti juga menahan diri dari sesuatu yang perlahan merusak kendali dan kebebasan memilih. Craving adalah manifestasi neurobiologis dari nafsu yang disebutkan dalam ayat berikut — dorongan yang melemahkan kendali diri jika tidak dijaga dengan rahmat dan kesadaran.",
+        en: "Understanding the brain reward system reminds us that short-term pleasure does not always bring goodness. Protecting the mind also means restraining oneself from things that slowly damage control and freedom of choice. Craving is the neurobiological manifestation of the soul's inclination described in the verse below — a drive that weakens self-control unless guarded by mercy and awareness.",
       },
+      quotes: [
+        {
+          arabic: "إِنَّ النَّفْسَ لَأَمَّارَةٌ بِالسُّوءِ إِلَّا مَا رَحِمَ رَبِّي",
+          translation: {
+            id: "Sesungguhnya nafsu itu selalu mendorong kepada keburukan, kecuali nafsu yang diberi rahmat oleh Tuhanku.",
+            en: "Indeed, the soul is a persistent inciter of evil, except those upon whom my Lord has mercy.",
+          },
+          source: "QS. Yūsuf [12]: 53 — relevan dengan konsep craving dan pengendalian diri",
+        },
+      ],
     },
     {
       key: "halal",
