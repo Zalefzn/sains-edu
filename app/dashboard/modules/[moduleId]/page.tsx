@@ -11,7 +11,103 @@ import {
   sanitizeModuleProgress,
   type Locale,
   type ModuleCode,
+  type ModuleQuote,
+  type ModuleTab,
+  type ModuleTable,
 } from "../../module-data";
+
+function ModuleTableView({ table, locale }: { table: ModuleTable; locale: Locale }) {
+  return (
+    <div className="mt-5 overflow-x-auto rounded-3xl border border-zinc-200/70">
+      <table className="w-full min-w-[560px] text-left text-sm">
+        <thead className="bg-zinc-50">
+          <tr>
+            {table.headers.map((header, index) => (
+              <th key={index} className="px-4 py-3 font-semibold text-zinc-900">
+                {pick(locale, header)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {table.rows.map((row, rowIndex) => (
+            <tr key={rowIndex} className="border-t border-zinc-200/70">
+              {row.map((cell, cellIndex) => (
+                <td key={cellIndex} className="px-4 py-3 align-top text-zinc-700">
+                  {pick(locale, cell)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ModuleQuoteView({ quote, locale }: { quote: ModuleQuote; locale: Locale }) {
+  return (
+    <div className="mt-4 rounded-3xl bg-zinc-50 p-6">
+      {quote.arabic ? (
+        <p dir="rtl" className="text-right text-lg leading-loose text-zinc-900">
+          {quote.arabic}
+        </p>
+      ) : null}
+      <p className="mt-3 text-sm italic leading-7 text-zinc-700">
+        &ldquo;{pick(locale, quote.translation)}&rdquo;
+      </p>
+      <p className="mt-2 text-xs font-semibold text-zinc-500">{quote.source}</p>
+    </div>
+  );
+}
+
+function ModuleTabsBlock({
+  tabs,
+  locale,
+  studyFocusLabel,
+}: {
+  tabs: ModuleTab[];
+  locale: Locale;
+  studyFocusLabel: string;
+}) {
+  const [activeId, setActiveId] = useState(tabs[0]?.id);
+  const active = tabs.find((tabItem) => tabItem.id === activeId) ?? tabs[0];
+
+  return (
+    <div className="mt-5">
+      <div className="flex flex-wrap gap-2">
+        {tabs.map((tabItem) => {
+          const isActive = tabItem.id === active.id;
+          return (
+            <button
+              key={tabItem.id}
+              type="button"
+              onClick={() => setActiveId(tabItem.id)}
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                isActive
+                  ? "border-transparent text-white"
+                  : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+              }`}
+              style={isActive ? { backgroundColor: "var(--brand)" } : undefined}
+            >
+              {pick(locale, tabItem.label)}
+            </button>
+          );
+        })}
+      </div>
+
+      {active.body ? (
+        <div className="mt-5 rounded-3xl bg-zinc-50 p-6">
+          <p className="text-sm font-semibold text-zinc-900">{studyFocusLabel}</p>
+          <p className="mt-3 text-sm leading-8 text-zinc-700">{pick(locale, active.body)}</p>
+        </div>
+      ) : null}
+
+      {active.quote ? <ModuleQuoteView quote={active.quote} locale={locale} /> : null}
+      {active.table ? <ModuleTableView table={active.table} locale={locale} /> : null}
+    </div>
+  );
+}
 
 function getInitialLocale(): Locale {
   if (typeof window === "undefined") return "id";
@@ -35,9 +131,13 @@ export default function ModuleDetailPage() {
   const [finished, setFinished] = useState(false);
   const [exerciseAnswers, setExerciseAnswers] = useState<Record<string, string>>({});
   const [exerciseResult, setExerciseResult] = useState<"passed" | "failed" | null>(null);
+  const [exerciseScore, setExerciseScore] = useState<{ correct: number; total: number } | null>(null);
 
   const moduleId = String(params?.moduleId ?? "").toUpperCase() as ModuleCode;
+  const [prevModuleId, setPrevModuleId] = useState(moduleId);
   const currentModule = modules.find((item) => item.code === moduleId);
+  const currentModuleIndex = modules.findIndex((item) => item.code === moduleId);
+  const nextModule = currentModuleIndex >= 0 ? modules[currentModuleIndex + 1] : undefined;
   const steps = currentModule ? moduleStepsByCode[moduleId] : [];
   const currentStep = steps[stepIndex];
 
@@ -45,6 +145,23 @@ export default function ModuleDetailPage() {
     () => router.push("/dashboard/explore"),
     [router]
   );
+
+  const goToNextModule = useCallback(() => {
+    if (nextModule) {
+      router.push(`/dashboard/modules/${nextModule.code.toLowerCase()}`);
+    } else {
+      backToMap();
+    }
+  }, [nextModule, router, backToMap]);
+
+  if (moduleId !== prevModuleId) {
+    setPrevModuleId(moduleId);
+    setStepIndex(0);
+    setFinished(false);
+    setExerciseResult(null);
+    setExerciseScore(null);
+    setExerciseAnswers({});
+  }
 
   useEffect(() => {
     const onPopState = () => backToMap();
@@ -78,7 +195,7 @@ export default function ModuleDetailPage() {
 
     for (const el of elements) observer.observe(el);
     return () => observer.disconnect();
-  }, [finished, stepIndex]);
+  }, [finished, stepIndex, exerciseResult]);
 
   const t = useMemo(
     () =>
@@ -155,6 +272,7 @@ export default function ModuleDetailPage() {
   const onSelectStep = (index: number) => {
     setFinished(false);
     setExerciseResult(null);
+    setExerciseScore(null);
     setExerciseAnswers({});
     setStepIndex(index);
     persistProgress(Math.round(((index + 1) / totalSteps) * 100));
@@ -167,13 +285,14 @@ export default function ModuleDetailPage() {
     }
 
     if (exerciseResult === "passed") {
-      backToMap();
+      goToNextModule();
       return;
     }
 
     if (exerciseResult === "failed") {
       const target = Math.max(0, steps.findIndex((s) => s.key === "material"));
       setExerciseResult(null);
+      setExerciseScore(null);
       setExerciseAnswers({});
       setStepIndex(target);
       persistProgress(Math.round(((target + 1) / totalSteps) * 100));
@@ -190,6 +309,7 @@ export default function ModuleDetailPage() {
         }
         const score = questions.filter((q) => exerciseAnswers[q.id] === q.correct).length;
         const passed = score >= Math.ceil(questions.length * 0.6);
+        setExerciseScore({ correct: score, total: questions.length });
         setExerciseResult(passed ? "passed" : "failed");
         persistProgress(passed ? 100 : Math.round(((stepIndex + 1) / totalSteps) * 100));
         return;
@@ -218,6 +338,7 @@ export default function ModuleDetailPage() {
 
     if (exerciseResult !== null) {
       setExerciseResult(null);
+      setExerciseScore(null);
       setExerciseAnswers({});
       return;
     }
@@ -442,6 +563,11 @@ export default function ModuleDetailPage() {
                   <h2 className="mt-1 text-lg font-semibold text-zinc-900">
                     {locale === "id" ? "Lulus! Kamu memahami materi ini." : "Passed! You understand this material."}
                   </h2>
+                  {exerciseScore ? (
+                    <p className="mt-1 text-sm font-medium text-zinc-500">
+                      {locale === "id" ? "Skor" : "Score"}: {exerciseScore.correct}/{exerciseScore.total}
+                    </p>
+                  ) : null}
                 </div>
               </div>
               <div className="mt-6 rounded-3xl bg-zinc-50 p-6">
@@ -470,6 +596,11 @@ export default function ModuleDetailPage() {
                       ? "Pelajari kembali materi inti sebelum mencoba lagi."
                       : "Review the core material before trying again."}
                   </h2>
+                  {exerciseScore ? (
+                    <p className="mt-1 text-sm font-medium text-zinc-500">
+                      {locale === "id" ? "Skor" : "Score"}: {exerciseScore.correct}/{exerciseScore.total}
+                    </p>
+                  ) : null}
                 </div>
               </div>
               <div className="mt-6 rounded-3xl bg-zinc-50 p-6">
@@ -483,36 +614,29 @@ export default function ModuleDetailPage() {
             </section>
           ) : !finished ? (
             <section className="space-y-5">
-              {steps.map((step, index) => {
-                const active = index === stepIndex;
-                const isExerciseActive = step.key === "exercise" && active;
+              {(() => {
+                const step = currentStep;
+                const isExerciseActive = step.key === "exercise";
                 const exerciseQuestions = isExerciseActive ? (step.questions ?? []) : [];
                 return (
                   <article
-                    key={`${step.key}-${index}`}
-                    className={`reveal-up rounded-3xl border bg-white p-6 transition-colors ring-1 sm:p-8 ${
-                      active
-                        ? "border-[var(--brand)]/30 ring-[var(--brand)]/20"
-                        : "border-zinc-200/70 ring-zinc-200/70"
-                    }`}
-                    style={revealDelayStyle(index * 40)}
+                    key={`${moduleId}-${step.key}`}
+                    className="reveal-up rounded-3xl border border-[var(--brand)]/30 bg-white p-6 ring-1 ring-[var(--brand)]/20 sm:p-8"
                   >
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                       <div className="max-w-3xl">
                         <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                          {t.stepLabel} {index + 1}
+                          {t.stepLabel} {stepIndex + 1}
                         </p>
                         <h3 className="mt-2 text-xl font-semibold text-zinc-900">
                           {pick(locale, step.title)}
                         </h3>
                       </div>
                       <div
-                        className={`inline-flex rounded-full px-3 py-1.5 text-xs font-semibold ${
-                          active ? "text-white" : "bg-zinc-100 text-zinc-700"
-                        }`}
-                        style={active ? { backgroundColor: "var(--brand)" } : undefined}
+                        className="inline-flex rounded-full px-3 py-1.5 text-xs font-semibold text-white"
+                        style={{ backgroundColor: "var(--brand)" }}
                       >
-                        {active ? t.activeStep : t.jumpToStep}
+                        {t.activeStep}
                       </div>
                     </div>
 
@@ -529,12 +653,19 @@ export default function ModuleDetailPage() {
                         <div className="mt-5 overflow-hidden rounded-3xl border border-zinc-200/70">
                           <iframe
                             src={`https://pubchem.ncbi.nlm.nih.gov/compound/${currentModule.pubchemCid}#section=3D-Conformer&embed=true`}
-                            className="h-[480px] w-full border-0"
+                            className="h-[85vh] min-h-[720px] w-full border-0"
                             title={`3D structure – ${pick(locale, currentModule.title)}`}
                             loading="lazy"
                           />
                         </div>
                       </>
+                    ) : step.tabs && step.tabs.length > 0 ? (
+                      <ModuleTabsBlock
+                        key={`${moduleId}-${step.key}`}
+                        tabs={step.tabs}
+                        locale={locale}
+                        studyFocusLabel={t.studyFocus}
+                      />
                     ) : isExerciseActive && exerciseQuestions.length > 0 ? (
                       <div className="mt-5 space-y-4">
                         {exerciseQuestions.map((q, qi) => (
@@ -585,6 +716,18 @@ export default function ModuleDetailPage() {
                           </p>
                         </div>
 
+                        {step.table ? (
+                          <ModuleTableView table={step.table} locale={locale} />
+                        ) : null}
+
+                        {step.quotes?.length ? (
+                          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                            {step.quotes.map((quote, quoteIndex) => (
+                              <ModuleQuoteView key={quoteIndex} quote={quote} locale={locale} />
+                            ))}
+                          </div>
+                        ) : null}
+
                         {step.checkpoints?.length ? (
                           <div className="mt-5 rounded-3xl border border-zinc-200 bg-white p-6">
                             <p className="text-sm font-semibold text-zinc-900">
@@ -607,7 +750,7 @@ export default function ModuleDetailPage() {
                     )}
                   </article>
                 );
-              })}
+              })()}
             </section>
           ) : (
             <section className="reveal-up rounded-3xl bg-white p-6 ring-1 ring-zinc-200/70 sm:p-8">
@@ -648,7 +791,9 @@ export default function ModuleDetailPage() {
             style={revealDelayStyle(80)}
           >
             {exerciseResult === "passed"
-              ? t.continueMap
+              ? nextModule
+                ? (locale === "id" ? `Lanjut ke ${nextModule.code}` : `Continue to ${nextModule.code}`)
+                : t.continueMap
               : exerciseResult === "failed"
               ? (locale === "id" ? "Pelajari Ulang" : "Review Material")
               : finished

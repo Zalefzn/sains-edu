@@ -16,6 +16,25 @@ export type ExerciseQuestion = {
   correct: string;
 };
 
+export type ModuleQuote = {
+  arabic?: string;
+  translation: LocalizedText;
+  source: string;
+};
+
+export type ModuleTable = {
+  headers: LocalizedText[];
+  rows: LocalizedText[][];
+};
+
+export type ModuleTab = {
+  id: string;
+  label: LocalizedText;
+  body?: LocalizedText;
+  table?: ModuleTable;
+  quote?: ModuleQuote;
+};
+
 export type ModuleStep = {
   key:
     | "stimulus"
@@ -29,6 +48,9 @@ export type ModuleStep = {
   body: LocalizedText;
   checkpoints?: LocalizedText[];
   questions?: ExerciseQuestion[];
+  table?: ModuleTable;
+  quotes?: ModuleQuote[];
+  tabs?: ModuleTab[];
 };
 
 export type ModuleProgressMap = Record<ModuleCode, number>;
@@ -177,6 +199,32 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         id: "Kamu diharapkan mampu menjelaskan pengertian zat adiktif dan psikotropika, membedakan ruang lingkup keduanya, serta memahami pentingnya kehati-hatian saat menghadapi produk yang berpotensi menimbulkan ketergantungan.",
         en: "You are expected to explain the definition of addictive substances and psychotropics, distinguish their scope, and understand the importance of caution when facing products that may cause dependency.",
       },
+      checkpoints: [
+        {
+          id: "Menjelaskan definisi zat adiktif, psikotropika, dan narkotika secara ilmiah dengan tepat.",
+          en: "Explain the definitions of addictive substances, psychotropics, and narcotics accurately and scientifically.",
+        },
+        {
+          id: "Membedakan konsep toleransi, ketergantungan fisik, ketergantungan psikologis, craving, dan withdrawal.",
+          en: "Distinguish tolerance, physical dependency, psychological dependency, craving, and withdrawal.",
+        },
+        {
+          id: "Mengidentifikasi perbedaan narkotika dan psikotropika berdasarkan dasar hukum di Indonesia.",
+          en: "Identify the difference between narcotics and psychotropics based on Indonesian law.",
+        },
+        {
+          id: "Mengintegrasikan lima tujuan maqāṣid asy-syarī'ah sebagai dalil ilmiah dan syar'i pelarangan zat adiktif.",
+          en: "Integrate the five objectives of maqāṣid asy-syarī'ah as the scientific and religious basis for prohibiting addictive substances.",
+        },
+        {
+          id: "Menerapkan kaidah fikih (lā ḍarara, sadd adz-dzarī'ah, ṭayyibāt vs khabā'ith) dalam menilai produk konsumsi.",
+          en: "Apply fiqh principles (lā ḍarara, sadd adz-dzarī'ah, ṭayyibāt vs khabā'ith) when evaluating consumer products.",
+        },
+        {
+          id: "Membaca dan menganalisis kandungan zat adiktif tersembunyi pada label produk sehari-hari (literasi halal).",
+          en: "Read and analyze hidden addictive substances on everyday product labels (halal literacy).",
+        },
+      ],
     },
     {
       key: "material",
@@ -185,9 +233,161 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Core Chemistry Material",
       },
       body: {
-        id: "Zat adiktif adalah zat yang memengaruhi sistem saraf dan dapat menimbulkan ketergantungan. Psikotropika adalah zat atau obat yang bekerja pada susunan saraf pusat sehingga mengubah aktivitas mental, perasaan, dan perilaku. Ruang lingkup materi ini mencakup definisi, sumber, bentuk, dan dampak awalnya bagi manusia.",
-        en: "Addictive substances affect the nervous system and may cause dependency. Psychotropics are substances or drugs that act on the central nervous system and alter mental activity, feelings, and behavior. This module covers their definition, sources, forms, and early effects on humans.",
+        id: "Pelajari konsep dasar zat adiktif dan psikotropika, siklus adiksi, serta dasar hukumnya di Indonesia melalui tiga tab berikut.",
+        en: "Study the basic concepts of addictive substances and psychotropics, the addiction cycle, and the Indonesian legal basis through the three tabs below.",
       },
+      tabs: [
+        {
+          id: "konsep-dasar",
+          label: { id: "Konsep Dasar", en: "Basic Concepts" },
+          body: {
+            id: "Zat adiktif adalah zat atau bahan kimia yang apabila dikonsumsi dapat menyebabkan ketergantungan (adiksi) fisik maupun psikologis, toleransi, serta gejala putus zat (withdrawal) ketika penggunaannya dihentikan. Psikotropika adalah zat atau obat (alamiah maupun sintetis, bukan narkotika) yang berkhasiat psikoaktif melalui pengaruh selektif pada susunan saraf pusat (SSP), sehingga menyebabkan perubahan khas pada aktivitas mental, persepsi, suasana hati, kesadaran, dan perilaku.",
+            en: "Addictive substances are chemicals that, when consumed, can cause physical or psychological dependency, tolerance, and withdrawal symptoms when use is stopped. Psychotropics are substances or drugs (natural or synthetic, not narcotics) that are psychoactive through a selective effect on the central nervous system (CNS), causing distinct changes in mental activity, perception, mood, consciousness, and behavior.",
+          },
+          table: {
+            headers: [
+              { id: "Istilah", en: "Term" },
+              { id: "Arti Singkat", en: "Short Meaning" },
+              { id: "Penjelasan", en: "Explanation" },
+            ],
+            rows: [
+              [
+                { id: "Toleransi", en: "Tolerance" },
+                { id: "Dosis makin besar", en: "Increasingly larger dose" },
+                {
+                  id: "Tubuh membutuhkan jumlah yang terus meningkat untuk menghasilkan efek yang sama akibat downregulasi reseptor.",
+                  en: "The body needs an increasing amount to produce the same effect due to receptor downregulation.",
+                },
+              ],
+              [
+                { id: "Craving", en: "Craving" },
+                { id: "Dorongan tak terkendali", en: "Uncontrollable urge" },
+                {
+                  id: "Desakan psikologis kuat yang mendorong penggunaan ulang, dikendalikan oleh amigdala dan korteks prefrontal yang telah berubah.",
+                  en: "A strong psychological urge that drives repeated use, governed by an altered amygdala and prefrontal cortex.",
+                },
+              ],
+              [
+                { id: "Withdrawal", en: "Withdrawal" },
+                { id: "Gejala Putus Zat", en: "Withdrawal symptoms" },
+                {
+                  id: "Reaksi fisik dan psikologis tidak nyaman (mual, tremor, kecemasan, depresi) ketika pemakaian dihentikan tiba-tiba.",
+                  en: "Uncomfortable physical and psychological reactions (nausea, tremor, anxiety, depression) when use is suddenly stopped.",
+                },
+              ],
+            ],
+          },
+        },
+        {
+          id: "siklus-adiksi",
+          label: { id: "Siklus Adiksi", en: "Addiction Cycle" },
+          body: {
+            id: "Adiksi berkembang melalui siklus berulang dari konsumsi pertama hingga ketergantungan penuh, melibatkan perubahan bertahap pada kadar dopamin dan kendali diri.",
+            en: "Addiction develops through a repeating cycle from first use to full dependency, involving gradual changes in dopamine levels and self-control.",
+          },
+          quote: {
+            arabic: "إِنَّ النَّفْسَ لَأَمَّارَةٌ بِالسُّوءِ إِلَّا مَا رَحِمَ رَبِّي",
+            translation: {
+              id: "Sesungguhnya nafsu itu selalu mendorong kepada keburukan, kecuali nafsu yang diberi rahmat oleh Tuhanku.",
+              en: "Indeed, the soul is a persistent inciter of evil, except those upon whom my Lord has mercy.",
+            },
+            source: "QS. Yūsuf [12]: 53 — relevan dengan konsep craving dan siklus adiksi",
+          },
+          table: {
+            headers: [
+              { id: "Fase", en: "Phase" },
+              { id: "Nama", en: "Name" },
+              { id: "Penjelasan", en: "Explanation" },
+            ],
+            rows: [
+              [
+                { id: "Fase 1", en: "Phase 1" },
+                { id: "Intoksikasi / binge", en: "Intoxication / binge" },
+                {
+                  id: "Aktivasi sistem reward → euforia. Korteks prefrontal (pengendalian diri) ditekan. Dopamin melonjak jauh di atas normal.",
+                  en: "Reward system activation → euphoria. The prefrontal cortex (self-control) is suppressed. Dopamine spikes far above normal.",
+                },
+              ],
+              [
+                { id: "Fase 2", en: "Phase 2" },
+                { id: "Withdrawal / afek negatif", en: "Withdrawal / negative affect" },
+                {
+                  id: "Kadar dopamin anjlok di bawah normal → disforia, kecemasan, insomnia, nyeri. Tubuh \"berhutang\" kepada zat.",
+                  en: "Dopamine falls below normal → dysphoria, anxiety, insomnia, pain. The body is \"in debt\" to the substance.",
+                },
+              ],
+              [
+                { id: "Fase 3", en: "Phase 3" },
+                { id: "Preokupasi / antisipasi", en: "Preoccupation / anticipation" },
+                {
+                  id: "Craving kuat muncul. Memori terkait zat mengaktifkan amigdala → relaps. Siklus berulang dan memperburuk kerusakan otak.",
+                  en: "Strong craving emerges. Substance-related memories activate the amygdala → relapse. The cycle repeats and worsens brain damage.",
+                },
+              ],
+            ],
+          },
+        },
+        {
+          id: "dasar-hukum",
+          label: { id: "Dasar Hukum", en: "Legal Basis" },
+          body: {
+            id: "Zat adiktif dan psikotropika di Indonesia diatur oleh tiga undang-undang utama dengan konsekuensi pidana berbeda. Narkotika (UU No. 35/2009) terutama bekerja pada reseptor opioid dengan efek analgesik dan euforia kuat, sedangkan psikotropika (UU No. 5/1997) bekerja lebih luas pada susunan saraf pusat — dopamin, serotonin, GABA, glutamat — dan lebih difokuskan pada efek mental dan perilaku.",
+            en: "Addictive substances and psychotropics in Indonesia are regulated by three main laws with different criminal consequences. Narcotics (Law No. 35/2009) mainly act on opioid receptors with strong analgesic and euphoric effects, while psychotropics (Law No. 5/1997) act more broadly on the central nervous system — dopamine, serotonin, GABA, glutamate — focusing more on mental and behavioral effects.",
+          },
+          table: {
+            headers: [
+              { id: "Kategori", en: "Category" },
+              { id: "Dasar Hukum", en: "Legal Basis" },
+              { id: "Contoh Zat", en: "Example Substances" },
+              { id: "Potensi Bahaya", en: "Risk Level" },
+            ],
+            rows: [
+              [
+                { id: "Narkotika Gol. I", en: "Narcotics Class I" },
+                { id: "UU No. 35/2009", en: "Law No. 35/2009" },
+                { id: "Heroin, kokain, ganja", en: "Heroin, cocaine, cannabis" },
+                { id: "Sangat tinggi · tidak boleh untuk terapi", en: "Very high · not for therapeutic use" },
+              ],
+              [
+                { id: "Narkotika Gol. II", en: "Narcotics Class II" },
+                { id: "UU No. 35/2009", en: "Law No. 35/2009" },
+                { id: "Morfin, petidin", en: "Morphine, pethidine" },
+                { id: "Tinggi · medis sangat terbatas", en: "High · very limited medical use" },
+              ],
+              [
+                { id: "Narkotika Gol. III", en: "Narcotics Class III" },
+                { id: "UU No. 35/2009", en: "Law No. 35/2009" },
+                { id: "Kodein, buprenorfin", en: "Codeine, buprenorphine" },
+                { id: "Sedang · dengan resep dokter", en: "Moderate · with prescription" },
+              ],
+              [
+                { id: "Psikotropika Gol. I", en: "Psychotropics Class I" },
+                { id: "UU No. 5/1997", en: "Law No. 5/1997" },
+                { id: "MDMA, LSD", en: "MDMA, LSD" },
+                { id: "Sangat tinggi", en: "Very high" },
+              ],
+              [
+                { id: "Psikotropika Gol. II", en: "Psychotropics Class II" },
+                { id: "UU No. 5/1997", en: "Law No. 5/1997" },
+                { id: "Amfetamin, metamfetamin", en: "Amphetamine, methamphetamine" },
+                { id: "Tinggi", en: "High" },
+              ],
+              [
+                { id: "Psikotropika Gol. III–IV", en: "Psychotropics Class III–IV" },
+                { id: "UU No. 5/1997", en: "Law No. 5/1997" },
+                { id: "Benzodiazepin, barbiturat", en: "Benzodiazepines, barbiturates" },
+                { id: "Sedang · penggunaan medis", en: "Moderate · medical use" },
+              ],
+              [
+                { id: "Zat adiktif lain", en: "Other addictive substances" },
+                { id: "UU No. 36/2009", en: "Law No. 36/2009" },
+                { id: "Nikotin, alkohol, kafein", en: "Nicotine, alcohol, caffeine" },
+                { id: "Rendah–sedang · legal bersyarat", en: "Low–moderate · conditionally legal" },
+              ],
+            ],
+          },
+        },
+      ],
     },
     {
       key: "visual",
@@ -196,8 +396,8 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Visualization",
       },
       body: {
-        id: "Visualisasi menampilkan peta sederhana yang mengelompokkan contoh zat adiktif berdasarkan bentuknya, sumbernya, dan jalur masuknya ke tubuh, sehingga siswa dapat melihat bahwa satu kategori zat dapat memberi dampak luas pada fungsi tubuh.",
-        en: "The visualization presents a simple map grouping examples of addictive substances by form, source, and route into the body so students can see that one category of substances may have wide effects on body function.",
+        id: "Struktur 3D nikotin berikut adalah salah satu contoh \"zat adiktif lain\" yang diatur UU No. 36/2009 — legal namun berstatus makruh–haram karena mengandung risiko ketergantungan.",
+        en: "The 3D structure below is nicotine, an example of an \"other addictive substance\" regulated under Law No. 36/2009 — legal, but makruh–haram in status due to its dependency risk.",
       },
     },
     {
@@ -207,9 +407,92 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Islamic Values Panel",
       },
       body: {
-        id: "Menjaga akal dan jiwa termasuk tujuan utama syariat. Memahami pengertian zat adiktif membantu seseorang menghindari hal yang merusak kemampuan berpikir, mengurangi kendali diri, dan membahayakan kesehatan.",
-        en: "Protecting the mind and soul is a key objective. Understanding addictive substances helps a person avoid what harms thinking ability, reduces self-control, and endangers health.",
+        id: "Menjaga akal dan jiwa termasuk tujuan utama syariat (maqāṣid asy-syarī'ah). Memahami pengertian zat adiktif membantu seseorang menghindari hal yang merusak kemampuan berpikir, mengurangi kendali diri, dan membahayakan kesehatan.",
+        en: "Protecting the mind and soul is among the key objectives of syariah (maqāṣid asy-syarī'ah). Understanding addictive substances helps a person avoid what harms thinking ability, reduces self-control, and endangers health.",
       },
+      table: {
+        headers: [
+          { id: "Nilai", en: "Value" },
+          { id: "Arti", en: "Meaning" },
+          { id: "Penjelasan", en: "Explanation" },
+        ],
+        rows: [
+          [
+            { id: "Hifzh al-'Aql", en: "Hifzh al-'Aql" },
+            { id: "Menjaga akal", en: "Protecting the mind" },
+            {
+              id: "Alasan utama haramnya khamr. Zat psikoaktif merusak fungsi kognitif, memori, dan pengambilan keputusan.",
+              en: "The main reason khamr is forbidden. Psychoactive substances damage cognitive function, memory, and decision-making.",
+            },
+          ],
+          [
+            { id: "Hifzh an-Nafs", en: "Hifzh an-Nafs" },
+            { id: "Menjaga jiwa", en: "Protecting the soul/life" },
+            {
+              id: "Overdosis & bunuh diri akibat adiksi melanggar kewajiban menjaga nyawa diri sendiri.",
+              en: "Overdose and suicide caused by addiction violate the obligation to protect one's own life.",
+            },
+          ],
+          [
+            { id: "Hifzh ad-Dīn", en: "Hifzh ad-Dīn" },
+            { id: "Menjaga agama", en: "Protecting religion" },
+            {
+              id: "Mabuk dan adiksi merusak kesadaran dan menjauhkan seseorang dari ibadah serta taklif syar'i.",
+              en: "Intoxication and addiction damage awareness and distance a person from worship and religious duty.",
+            },
+          ],
+          [
+            { id: "Hifzh an-Nasl", en: "Hifzh an-Nasl" },
+            { id: "Menjaga keturunan", en: "Protecting lineage" },
+            {
+              id: "Dampak teratogenik (janin cacat), disfungsi reproduksi, keluarga hancur akibat adiksi.",
+              en: "Teratogenic effects (birth defects), reproductive dysfunction, and broken families due to addiction.",
+            },
+          ],
+          [
+            { id: "Hifzh al-Māl", en: "Hifzh al-Māl" },
+            { id: "Menjaga harta", en: "Protecting wealth" },
+            {
+              id: "Adiksi menghancurkan produktivitas dan menyebabkan kerugian ekonomi individu, keluarga, negara.",
+              en: "Addiction destroys productivity and causes economic loss for individuals, families, and the state.",
+            },
+          ],
+        ],
+      },
+      quotes: [
+        {
+          arabic: "كُلُّ مُسْكِرٍ خَمْرٌ وَكُلُّ خَمْرٍ حَرَامٌ",
+          translation: {
+            id: "Setiap yang memabukkan adalah khamr, dan setiap khamr adalah haram.",
+            en: "Every intoxicant is khamr, and every khamr is forbidden.",
+          },
+          source: "HR. Muslim no. 2003, dari Ibnu Umar radhiyallahu 'anhuma",
+        },
+        {
+          arabic: "لَا ضَرَرَ وَلَا ضِرَارَ",
+          translation: {
+            id: "Tidak boleh ada bahaya yang ditimbulkan kepada diri sendiri maupun kepada orang lain.",
+            en: "There shall be no harming of oneself nor of others.",
+          },
+          source: "HR. Ibnu Mājah no. 2341, hadis hasan",
+        },
+        {
+          arabic: "مَا أَسْكَرَ كَثِيرُهُ فَقَلِيلُهُ حَرَامٌ",
+          translation: {
+            id: "Sesuatu yang memabukkan dalam jumlah banyak, maka sedikitnya pun haram.",
+            en: "Whatever intoxicates in large amounts, its small amount is also forbidden.",
+          },
+          source: "HR. Abu Dawud no. 3681 & at-Tirmidzi no. 1865, hasan sahih",
+        },
+        {
+          arabic: "وَلَا تُلْقُوا بِأَيْدِيكُمْ إِلَى التَّهْلُكَةِ",
+          translation: {
+            id: "Dan janganlah kamu jatuhkan dirimu ke dalam kebinasaan.",
+            en: "And do not throw yourselves into destruction.",
+          },
+          source: "QS. Al-Baqarah [2]: 195",
+        },
+      ],
     },
     {
       key: "halal",
@@ -218,8 +501,41 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         en: "Halal Literacy Panel",
       },
       body: {
-        id: "Literasi halal tidak hanya memeriksa label, tetapi juga menilai aspek tayyib, keamanan, manfaat, dan potensi mudarat. Produk yang tampak biasa tetap perlu dikaji kandungan dan efeknya bagi tubuh.",
-        en: "Halal literacy is not only about checking labels, but also assessing tayyib, safety, benefit, and possible harm. Products that seem ordinary still need to be reviewed for their ingredients and effects on the body.",
+        id: "Terdaftar di BPOM tidak sama dengan halal. BPOM menjamin keamanan kimia dan mikrobiologi; MUI menjamin kehalalan berdasarkan standar syariah. Sebuah produk dapat lolos BPOM namun tetap mengandung bahan haram atau syubhat — inilah dasar pentingnya literasi halal dalam memilih produk konsumsi.",
+        en: "Being registered with BPOM (Indonesia's food and drug agency) is not the same as being halal. BPOM guarantees chemical and microbiological safety; MUI (halal authority) certifies halal status based on syariah standards. A product can pass BPOM review yet still contain haram or syubhat (doubtful) ingredients — this is why halal literacy matters when choosing consumer products.",
+      },
+      table: {
+        headers: [
+          { id: "Kaidah", en: "Principle" },
+          { id: "Arti", en: "Meaning" },
+          { id: "Penjelasan", en: "Explanation" },
+        ],
+        rows: [
+          [
+            { id: "Sadd adz-Dzarī'ah", en: "Sadd adz-Dzarī'ah" },
+            { id: "Menutup jalan keharaman", en: "Blocking the path to sin" },
+            {
+              id: "Menjauhi lingkungan, teman, dan situasi yang mendekatkan kepada zat terlarang — meski belum tentu melakukan.",
+              en: "Avoiding environments, friends, and situations that lead toward prohibited substances — even before actually using them.",
+            },
+          ],
+          [
+            { id: "Syubhat", en: "Syubhat" },
+            { id: "Prinsip kehati-hatian", en: "Precautionary principle" },
+            {
+              id: "Jika status halal/haram meragukan, sikap wara' (tinggalkan) lebih utama. Contoh: taurin tanpa sertifikasi MUI.",
+              en: "If halal/haram status is doubtful, caution (avoiding it) is preferred. Example: taurine without MUI certification.",
+            },
+          ],
+          [
+            { id: "Darūrah", en: "Darūrah" },
+            { id: "Pengecualian darurat", en: "Emergency exception" },
+            {
+              id: "Opioid/benzodiazepin boleh digunakan dalam kondisi medis darurat, tanpa alternatif halal, dosis minimal, atas resep dokter.",
+              en: "Opioids/benzodiazepines may be used in medical emergencies, when no halal alternative exists, at minimal dose, and by prescription.",
+            },
+          ],
+        ],
       },
       checkpoints: [
         {
@@ -229,6 +545,10 @@ export const moduleStepsByCode: Record<ModuleCode, ModuleStep[]> = {
         {
           id: "Apakah ada risiko ketergantungan atau penyalahgunaan?",
           en: "Is there a risk of dependency or misuse?",
+        },
+        {
+          id: "Apakah kandungannya sudah bersertifikasi halal MUI, bukan hanya terdaftar BPOM?",
+          en: "Is the content MUI halal-certified, not just BPOM-registered?",
         },
       ],
     },
